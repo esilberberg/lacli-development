@@ -10,7 +10,7 @@ const exportBtn = document.getElementById('export-btn');
 const refreshBtn = document.getElementById('refresh-btn');
 const loadMoreBtn = document.getElementById('loadMore');
 let displayedCount = 0; // Track how many data objects are currently displayed
-const itemsPerPage = 200; // Number of items to display per page
+const itemsPerPage = 15; // Number of items to display per page
 
 // Get search terms from URL and display in search bar
 const searchURL = window.location.href;
@@ -119,6 +119,12 @@ function displayData(data, searchQuery, count, refresh) {
         </div>
     ` : '';
     
+    const arrayOfResourceTypes = object.Resource_Types.split(';');
+    const arrayOfSubjectsEN = object.Subjects_in_English.split(';');
+    const arrayOfSubjectsES = object.Materias_en_Espanol.split(';');
+    const arrayOfSubjectsPT = object.Assuntos_em_Portugues.split(';');
+    
+    
     return `
     <div class="resource">
         <div class="heading">
@@ -126,7 +132,7 @@ function displayData(data, searchQuery, count, refresh) {
             <p class="institution">${object.Institutional_Hosts}</p>
             <p><span class="inline-label">Broad Subject Areas: </span>${object.Broad_Subject_Areas}</p>
             <p><span class="inline-label">Countries: </span>${object.Countries}</p>
-            <p><span class="inline-label">Resource Types: </span>${object.Resource_Types}</p>
+            <p><span class="inline-label">Resource Types: </span>${arrayOfResourceTypes.map(type => `<button class="subject-tag">${type}</button>`).join('&ensp; ')}</p>
         </div>
         <button aria-label="Expand Details" class="resource-accordion">Details <i class="fa-solid fa-caret-down"></i></button>
         <div class="resource-panel">
@@ -140,15 +146,15 @@ function displayData(data, searchQuery, count, refresh) {
             </div>
             <div class="field">
                 <p class="label">Subjects in English:</p>
-                <p class="value">${object.Subjects_in_English}</p>
+                <p class="value">${arrayOfSubjectsEN.map(subject => `<button class="subject-tag">${subject}</button>`).join('&ensp; ')}</p>
             </div>
             <div class="field">
                 <p class="label">Materias en Español:</p>
-                <p class="value">${object.Materias_en_Espanol}</p>
+                <p class="value">${arrayOfSubjectsES.map(subject => `<button class="subject-tag">${subject}</button>`).join('&ensp; ')}</p>
             </div>
             <div class="field">
                 <p class="label">Assuntos em Português:</p>
-                <p class="value">${object.Assuntos_em_Portugues}</p
+                <p class="value">${arrayOfSubjectsPT.map(subject => `<button class="subject-tag">${subject}</button>`).join('&ensp; ')}</p
             </div>
             <div class="field">
                 <p class="label">Specific Formats:</p>
@@ -174,6 +180,12 @@ function displayData(data, searchQuery, count, refresh) {
     }   else {
         display.innerHTML += dataDisplay;
     }
+
+    document.querySelectorAll('.subject-tag').forEach(subjectLink => {
+        subjectLink.addEventListener('click', () => {
+          subjectLinkGenerator(event, subjectLink);
+        });
+    });
 
     if (displayedCount < activeDataToDisplay.length) {
         loadMoreBtn.style.display = 'block';
@@ -275,3 +287,16 @@ function exportJSON() {
     link.click();
     document.body.removeChild(link);
   }
+
+function subjectLinkGenerator(event, link) {
+    filterData(link.textContent);
+
+    search.value = link.textContent
+
+    const newURL = new URL(window.location.href);
+    newURL.searchParams.set('q', link.textContent);
+    window.history.pushState(null, '', newURL);
+
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
