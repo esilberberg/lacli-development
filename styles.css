@@ -700,6 +700,18 @@ footer.footer-secondary {
     margin-top: 0.5rem;
 }
 
+.subject-tag {
+    border: none;
+    background-color: transparent;
+    text-decoration: underline;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-weight: 100;
+}
+
+.subject-tag:hover {
+    color: var(--tertiary);
+}
 
 /* ----- LOADER ----- */
 #loader {
