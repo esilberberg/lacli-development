@@ -119,19 +119,24 @@ function displayData(data, searchQuery, count, refresh) {
         </div>
     ` : '';
     
+    const arrayOfInstitutions = object.Institutional_Hosts.split(';');
+    const arrayOfBroadSubjects = object.Broad_Subject_Areas.split(';');
+    const arrayOfCountries = object.Countries.split(';');
     const arrayOfResourceTypes = object.Resource_Types.split(';');
     const arrayOfSubjectsEN = object.Subjects_in_English.split(';');
     const arrayOfSubjectsES = object.Materias_en_Espanol.split(';');
     const arrayOfSubjectsPT = object.Assuntos_em_Portugues.split(';');
+    const arrayOfSpecificFormats = object.Specific_Formats.split(';');
+    const arrayOfGeoAreas = object.Geographical_Area.split(';');
     
     
     return `
     <div class="resource">
         <div class="heading">
             <h2><a target="blank" href="${object.URL}"><span class="counter">${counter++}. </span>${object.Resource_Title}</a></h2>
-            <p class="institution">${object.Institutional_Hosts}</p>
-            <p><span class="inline-label">Broad Subject Areas: </span>${object.Broad_Subject_Areas}</p>
-            <p><span class="inline-label">Countries: </span>${object.Countries}</p>
+            <p class="institution">${arrayOfInstitutions.map(insti => `<button class="subject-tag">${insti}</button>`).join('&ensp; ')}</p>
+            <p><span class="inline-label">Broad Subject Areas: </span>${arrayOfBroadSubjects.map(type => `<button class="subject-tag">${type}</button>`).join('&ensp; ')}</p>
+            <p><span class="inline-label">Countries: </span>${arrayOfCountries.map(country => `<button class="subject-tag">${country}</button>`).join('&ensp; ')}</p>
             <p><span class="inline-label">Resource Types: </span>${arrayOfResourceTypes.map(type => `<button class="subject-tag">${type}</button>`).join('&ensp; ')}</p>
         </div>
         <button aria-label="Expand Details" class="resource-accordion">Details <i class="fa-solid fa-caret-down"></i></button>
@@ -158,11 +163,11 @@ function displayData(data, searchQuery, count, refresh) {
             </div>
             <div class="field">
                 <p class="label">Specific Formats:</p>
-                <p class="value">${object.Specific_Formats}</p>
+                <p class="value">${arrayOfSpecificFormats.map(format => `<button class="subject-tag">${format}</button>`).join('&ensp; ')}</p>
             </div>
             <div class="field">
                 <p class="label">Geographical Area:</p>
-                <p class="value">${object.Geographical_Area}</p>
+                <p class="value">${arrayOfGeoAreas.map(area => `<button class="subject-tag">${area}</button>`).join('&ensp; ')}</p>
             </div>
             <div class="field">
                 <p class="label">Time Coverage:</p>
