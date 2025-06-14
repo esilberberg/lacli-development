@@ -77,7 +77,28 @@
         border-color: #007bff;
         font-weight: bold;
     }
+.active-facet-tag {
+    background-color: #e0f7fa;
+    border: 1px solid #00bcd4;
+    padding: 3px 8px;
+    margin-right: 5px;
+    border-radius: 3px;
+    font-size: 0.85em;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
 
+.active-facet-tag .remove-facet-btn {
+    margin-left: 5px;
+    font-weight: bold;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.active-facet-tag .remove-facet-btn:hover {
+    color: #dc3545;
+}
 /* Styles for resource display */
 #display > div {
     margin-bottom: 5rem;
@@ -152,6 +173,7 @@
     <section class="search-results">
     <div class="facets">
         <h2>Filters</h2>
+        <div id="activeFacetsSummary"></div>
         <!-- Format Accordion -->
         <div>
             <h3 class="facet-accordion-header">Format +</h3>
@@ -176,6 +198,7 @@
     </div>
         <div class="lacli-resources-display">
             <h2>Search Results</h2>
+            
             <div id="displaySearchSummary"></div>
             <div id="loader"></div>
             <div id="display">

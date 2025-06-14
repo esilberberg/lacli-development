@@ -13,12 +13,14 @@ function showMessageBox(message) {
 }
 
 // DOM elements
+const apiEndpoint = 'https://script.google.com/macros/s/AKfycbwA7DLdT6UmiOU7B89gdMglsDdXedG3fyh5nmCr0EeIx1iSkXVTr0-mYn615Q7WCPpB/exec';
+
 const display = document.getElementById('display');
 const search = document.getElementById('library-search');
 const formatFacet = document.getElementById('format-facet');
 const countriesFacet = document.getElementById('countries-facet');
 const subjectsEngFacet = document.getElementById('subjects-eng-facet');
-const apiEndpoint = 'https://script.google.com/macros/s/AKfycbwA7DLdT6UmiOU7B89gdMglsDdXedG3fyh5nmCr0EeIx1iSkXVTr0-mYn615Q7WCPpB/exec';
+const activeFacetsSummary = document.getElementById('activeFacetsSummary');
 
 const librarySearchBtn = document.getElementById('library-search-btn');
 const loader = document.getElementById('loader');
@@ -111,8 +113,9 @@ function filterData(searchQuery) {
     activeDataToDisplay = filtered; // Store the currently filtered data
     displayedCount = 0; // Reset displayed count for new filter/search
     displayData(activeDataToDisplay, searchQuery, displayedCount, true); // Display data, refreshing the display
+    updateActiveFacetsSummary(); // <--- Call this function here
     loader.style.display = 'none'; // Hide loader after filtering
-}
+};
 
 // Runs the search based on the input field value and updates URL
 function runSearch() {
@@ -346,6 +349,53 @@ function createFacets(data, fieldName, targetElement, noDataMessage) {
     targetElement.querySelectorAll('.facet').forEach(facetButton => {
         facetButton.removeEventListener('click', runFacetFiltering); // Prevent duplicate listeners
         facetButton.addEventListener('click', runFacetFiltering);
+    });
+}
+
+function updateActiveFacetsSummary() {
+    let summaryHtml = '';
+    const activeFacetsCount = Object.keys(currentActiveFacets).length;
+
+    if (activeFacetsCount > 0) {
+        summaryHtml += '<p><strong>Active Filters:</strong> ';
+        const facetElements = [];
+        for (const fieldName in currentActiveFacets) {
+            currentActiveFacets[fieldName].forEach(value => {
+                // Encode URI component to handle special characters in data attributes safely
+                const encodedFieldName = encodeURIComponent(fieldName);
+                const encodedValue = encodeURIComponent(value);
+
+                facetElements.push(
+                    `<button class="active-facet-tag" data-field-name="${encodedFieldName}" data-facet-value="${encodedValue}">` +
+                    `${value} <span class="remove-facet-btn" data-field-name="${encodedFieldName}" data-facet-value="${encodedValue}">x</span></button>`
+                );
+            });
+        }
+        summaryHtml += facetElements.join('&ensp;') + '</p>';
+    } else {
+        summaryHtml = ''; // Clear the summary if no active facets
+    }
+
+    activeFacetsSummary.innerHTML = summaryHtml;
+
+    // Attach event listeners to the new "x" buttons
+    activeFacetsSummary.querySelectorAll('.remove-facet-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const fieldName = decodeURIComponent(event.target.dataset.fieldName);
+            const facetValue = decodeURIComponent(event.target.dataset.facetValue);
+
+            // Simulate a facet click to toggle it off
+            if (currentActiveFacets[fieldName]) {
+                const index = currentActiveFacets[fieldName].indexOf(facetValue);
+                if (index > -1) {
+                    currentActiveFacets[fieldName].splice(index, 1);
+                }
+                if (currentActiveFacets[fieldName].length === 0) {
+                    delete currentActiveFacets[fieldName];
+                }
+            }
+            filterData(search.value.trim()); // Re-filter to update results and summary
+        });
     });
 }
 
