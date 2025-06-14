@@ -1,103 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G8MVH2C5PD"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-G8MVH2C5PD');
-    </script>
-    
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Explore a repository of free online resources for Latin American, Caribbean, Latinx, and Iberian studies.">
+<style>
+    button {
+        cursor: pointer;
+    }
+    .search-interface {
+        margin-bottom: 5rem;
+        text-align: center;
+    }
+    .search-results {
+        display: flex;
+        gap: 2rem; 
+        align-items: flex-start; 
+    }
+    .facets {
+        flex: 0 0 25%; 
+        max-width: 25%; 
+    }
+    .lacli-resources-display {
+        flex: 1; 
+        padding: 0 2rem;
+        min-width: 0; 
+    }
 
-    <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-    <link rel="manifest" href="favicon/site.webmanifest">
-    <link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#19505c">
-    <meta name="msapplication-TileColor" content="#19505c">
-    <meta name="theme-color" content="#ffffff">
+    /* Facet Accordion Styles */
+    .facet-accordion-header {
+        cursor: pointer;
+        padding: 10px;
+        background-color: #f0f0f0;
+        font-weight: bold;
+        margin-bottom: 5px;
+        user-select: none; /* Prevent text selection on double-click */
+    }
 
-    <script src="https://kit.fontawesome.com/1d9765704f.js" crossorigin="anonymous"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&family=Lato:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+    .facet-accordion-header:hover {
+        background-color: #e0e0e0;
+    }
 
-    <link rel="stylesheet" href="styles.css">
+    .facet-accordion-content {
+        max-height: 0;
+        overflow: hidden; /* Important for the transition and for hiding overflow when closed */
+        transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        padding: 0 10px;
+        box-sizing: border-box; /* Include padding in the element's total width and height */
+    }
 
-    <title>LACLI</title>
+    .facet-accordion-content.active {
+        max-height: 300px; /* Set the desired maximum height */
+        overflow-y: auto; /* Adds scrollbar when content exceeds max-height */
+        padding: 10px;
+    }
+    .facet {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        border-radius: 3px;
+        font-size: 0.9em;
+        color: #333;
+        white-space: nowrap;
+        display: inline-block; 
+    }
+
+    .facet:hover {
+        color: blue;
+    }
+
+    /* Style for active (selected) facet buttons */
+    .facet.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+        font-weight: bold;
+    }
+
+/* Styles for resource display */
+#display > div {
+    margin-bottom: 5rem;
+}
+/* Styles for the resource display accordion */
+
+    .resource-accordion {
+        cursor: pointer;
+        width: 150px; /* Consider making this more flexible, e.g., width: 100% for full width */
+        text-align: left;
+        border: none;
+        background-color: #f3f4f6;
+        padding: 0.75rem 1rem;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.4s ease;
+        border-radius: 0.375rem;
+        border: 1px solid darkcyan;
+    }
+    .resource-accordion:hover {
+        background-color: #e5e7eb;
+    }
+    .resource-accordion-active {
+        background-color: #e5e7eb;
+    }
+    .resource-accordion .fa-caret-down {
+        transition: transform 0.3s ease;
+    }
+    .resource-accordion-active .fa-caret-down {
+        transform: rotate(180deg);
+    }
+    .resource-panel {
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+        padding: 0 1rem;
+        box-sizing: border-box; /* Ensure padding is included in height calculations */
+
+    }
+    .resource-panel.active {
+        max-height: 1000px; /* A large enough value to accommodate content, adjust as needed */
+        padding: 1rem;
+    }
+    /* Basic styling for all facet buttons */
+    
+</style>
+    <title></title>
 </head>
-
 <body>
-    <!-- <div class="alert">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        We won <a href="http://dhawards.org/dhawards2023/results/" target="_blank" rel="noopener noreferrer">Best Dataset from the DH Awards</a>! Thank you to all who voted and all the project collaborators.
-    </div> -->
-    <header id="header-main"></header>
-    <section id="index-searchfield">
-        <div class="hero-img" alt="&ldquo;Mapa de la Relación Geográfica de Metztitlan&rdquo; // Benson Latin American Collection">
-            <div class="hero-content">
-                <p id="hero-text">Explore a repository of free online resources for Latin American, Caribbean, Latinx, and Iberian studies.</p>
-                <div class="hero-search-wrapper">
-                    <input autocomplete="off" type="text" id="index-search" placeholder="Search...">
-                    <button id="index-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-                </div>
-            </div>
-        </div>
-        <p class="credit">"Mapa de la relación geográfica de Metztitlan," [JGI XXIV-12]. LLILAS Benson Latin American Studies Collections, The University of Texas at Austin.</p>
-    </section>
-    <section id="index-content">
-        <div class="index-item">
-            <div class="populations">
-                <div class="pop">
-                    <h2><i class="fa-solid fa-graduation-cap"></i> <span id="students">Students</span></h2>
-                    <p id="students-description">Explore collections by subject, country, language, time period and more to support original research projects.</p>
-                </div>
-                <div class="pop">
-                    <h2><i class="fa-solid fa-chalkboard-user"></i> <span id="faculty">Faculty</span></h2>
-                    <p id="faculty-description">Enhance courses with primary sources, reference materials, scholarly articles, and more!</p>
-                </div>
-                <div class="pop">
-                    <h2><i class="fa-solid fa-building-columns"></i> <span id="librarians">Librarians</span></h2>
-                    <p id="librarians-description">Discover resources for research consultations and develop subject or country-specific research guides.</p>
-                </div>
-                <div class="pop">
-                    <h2><i class="fa-solid fa-feather"></i> <span id="digital-scholars">Digital Scholars</span></h2>
-                    <p id="digital-scholars-description">Fuel your digital scholarship projects with open data and primary source collections.</p>
-                </div>
-            </div>
-        </div>
-        <div class="index-item">
-            <div class="contributors">
-                <div class="main-contributor">
-                    <h3 id="developed-by">Developed by</h3>
-                    <a href="https://salalm.org/lane" target="_blank"><img src="media/lane-logo.jpg" alt="LANE logo"></a>
-                </div>
-                <div class="collaborating-contributors">
-                    <h3 id="collaborating-institutions">Collaborating Institutions</h3>
-                    <a href="https://biblioteca.colmex.mx/" target="_blank"><img src="media/colmex-bib-logo.png" alt="Biblioteca Daniel Cosío Villegas"></a>
-                    <a href="https://cpdoc.fgv.br/" target="_blank"><img src="media/FGV-CPDOC.png" alt="FGV CPDOC"></a>
-                </div>
-             </div>
 
+<div id="message-box">
+    <p id="message-content"></p>
+    <div>
+        <button id="message-ok-btn">OK</button>
+    </div>
+</div>
+<div class="library-wrapper">
+    <section class="search-interface">
+        <div>
+            <input type="text" id="library-search" placeholder="Enter keywords...">
+            <button id="library-search-btn">Search</button>
+        </div>
+        <div>
+            <button id="refresh-btn">New Search</button>
+            <button id="random-btn">Random</button>
+            <button id="export-btn">Download Results</button>
         </div>
     </section>
-   
-    <footer class="footer-main" id="footer-main"></footer>
+    <section class="search-results">
+    <div class="facets">
+        <h2>Filters</h2>
+        <!-- Format Accordion -->
+        <div>
+            <h3 class="facet-accordion-header">Format +</h3>
+            <div id="format-facet" class="facet-accordion-content">
+                <p>Loading...</p>
+            </div>
+        </div>
+        <!-- Countries Accordion -->
+        <div>
+            <h3 class="facet-accordion-header">Country +</h3>
+            <div id="countries-facet" class="facet-accordion-content">
+                <p>Loading...</p>
+            </div>
+        </div>
+        <!-- Subjects in English Accordion -->
+        <div>
+            <h3 class="facet-accordion-header">Subjects in English +</h3>
+            <div id="subjects-eng-facet" class="facet-accordion-content">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+        <div class="lacli-resources-display">
+            <h2>Search Results</h2>
+            <div id="displaySearchSummary"></div>
+            <div id="loader"></div>
+            <div id="display">
+                <p>Loading...</p>
+            </div>
+            <button id="loadMore">Load More</button>
+        </div>
+    </section>
+</div>
 
-<script src="header.js"></script>
-<script src="footer.js"></script>
-<script src="scripts/initQuery.js"></script>
-<script src="./translation/navbar.js"></script>
-<script src="./translation/index.js"></script>
-<script src="scripts/navigation.js"></script>
+<script src="app2.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const facetAccordionHeaders = document.querySelectorAll('.facet-accordion-header');
+
+        facetAccordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+
+                // Toggle the 'active' class on the header 
+                header.classList.toggle('active'); 
+                content.classList.toggle('active');
+
+            });
+        });  
+    });
+
+</script>
 
 </body>
+</html>
