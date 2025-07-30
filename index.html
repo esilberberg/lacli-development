@@ -162,10 +162,12 @@
     <section class="search-interface">
         <div>
             <input type="text" id="library-search" placeholder="Enter keywords...">
+            <button class="refresh-btn">X</button>
             <button id="library-search-btn">Search</button>
+            
         </div>
         <div>
-            <button id="refresh-btn">New Search</button>
+            <button class="refresh-btn">New Search</button>
             <button id="random-btn">Random</button>
             <button id="export-btn">Download Results</button>
         </div>
@@ -173,7 +175,14 @@
     <section class="search-results">
     <div class="facets">
         <h2>Filters</h2>
-        <div id="activeFacetsSummary"></div>
+        
+         <!-- Resource Type Accordion -->
+        <div>
+            <h3 class="facet-accordion-header">Resource Type +</h3>
+            <div id="resource-types-facet" class="facet-accordion-content">
+                <p>Loading...</p>
+            </div>
+        </div>
         <!-- Format Accordion -->
         <div>
             <h3 class="facet-accordion-header">Format +</h3>
@@ -188,6 +197,13 @@
                 <p>Loading...</p>
             </div>
         </div>
+        <!-- Broad Subject Accordion -->
+        <div>
+            <h3 class="facet-accordion-header">Broad Subject +</h3>
+            <div id="broad-subject-areas-facet" class="facet-accordion-content">
+                <p>Loading...</p>
+            </div>
+        </div>
         <!-- Subjects in English Accordion -->
         <div>
             <h3 class="facet-accordion-header">Subjects in English +</h3>
@@ -195,11 +211,41 @@
                 <p>Loading...</p>
             </div>
         </div>
+         <!-- Language Accordion -->
+        <div>
+            <h3 class="facet-accordion-header">Language +</h3>
+            <div id="languages-facet" class="facet-accordion-content">
+                <p>Loading...</p>
+            </div>
+        </div>
+        <!-- Geographical Area Accordion -->
+        <div>
+            <h3 class="facet-accordion-header">Geographic Area +</h3>
+            <div id="geographical-area-facet" class="facet-accordion-content">
+                <p>Loading...</p>
+            </div>
+        </div>
+        <!-- Time Coverage Accordion -->
+        <div>
+            <h3 class="facet-accordion-header">Time +</h3>
+            <div id="time-coverage-facet" class="facet-accordion-content">
+                <p>Loading...</p>
+            </div>
+        </div>
+        <!-- Institutional Host Accordion -->
+        <div>
+            <h3 class="facet-accordion-header">Institutional Host +</h3>
+            <div id="institutional-host-facet" class="facet-accordion-content">
+                <p>Loading...</p>
+            </div>
+        </div>
     </div>
         <div class="lacli-resources-display">
             <h2>Search Results</h2>
-            
-            <div id="displaySearchSummary"></div>
+            <div>
+                <div id="displaySearchSummary"></div>
+                <div id="activeFacetsSummary"></div>
+            </div>
             <div id="loader"></div>
             <div id="display">
                 <p>Loading...</p>

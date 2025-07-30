@@ -17,9 +17,17 @@ const apiEndpoint = 'https://script.google.com/macros/s/AKfycbwA7DLdT6UmiOU7B89g
 
 const display = document.getElementById('display');
 const search = document.getElementById('library-search');
+
+const resourceTypesFacet = document.getElementById('resource-types-facet');
 const formatFacet = document.getElementById('format-facet');
 const countriesFacet = document.getElementById('countries-facet');
+const broadSubjectAreasFacet = document.getElementById('broad-subject-areas-facet');
 const subjectsEngFacet = document.getElementById('subjects-eng-facet');
+const languagesFacet = document.getElementById('languages-facet');
+const geographicalAreaFacet = document.getElementById('geographical-area-facet');
+const timeCoverageFacet = document.getElementById('time-coverage-facet');
+const institutionalHostsFacet = document.getElementById('institutional-host-facet');
+
 const activeFacetsSummary = document.getElementById('activeFacetsSummary');
 
 const librarySearchBtn = document.getElementById('library-search-btn');
@@ -27,8 +35,11 @@ const loader = document.getElementById('loader');
 const displaySearchSummary = document.getElementById('displaySearchSummary');
 const randomBtn = document.getElementById('random-btn');
 const exportBtn = document.getElementById('export-btn');
-const refreshBtn = document.getElementById('refresh-btn');
+// const refreshBtn = document.getElementById('refresh-btn');
+const refreshBtns = document.getElementsByClassName('refresh-btn');
 const loadMoreBtn = document.getElementById('loadMore');
+
+
 
 let displayedCount = 0; // Track how many data objects are currently displayed for pagination
 const itemsPerPage = 15; // Number of items to display per page
@@ -113,7 +124,7 @@ function filterData(searchQuery) {
     activeDataToDisplay = filtered; // Store the currently filtered data
     displayedCount = 0; // Reset displayed count for new filter/search
     displayData(activeDataToDisplay, searchQuery, displayedCount, true); // Display data, refreshing the display
-    updateActiveFacetsSummary(); // <--- Call this function here
+    updateActiveFacetsSummary();
     loader.style.display = 'none'; // Hide loader after filtering
 };
 
@@ -251,9 +262,15 @@ function displayData(data, searchQuery, count, refresh) {
     }
 
     // Recreate facets based on the *currentData* to reflect available options
+    createFacets(activeDataToDisplay, 'Resource_Types', resourceTypesFacet, 'No resource types found.');
     createFacets(activeDataToDisplay, 'Specific_Formats', formatFacet, 'No specific formats found.');
     createFacets(activeDataToDisplay, 'Countries', countriesFacet, 'No countries found.');
+    createFacets(activeDataToDisplay, 'Broad_Subject_Areas', broadSubjectAreasFacet, 'No subjects found.');
     createFacets(activeDataToDisplay, 'Subjects_in_English', subjectsEngFacet, 'No subjects found.');
+    createFacets(activeDataToDisplay, 'Languages', languagesFacet, 'No languages found.');
+    createFacets(activeDataToDisplay, 'Geographical_Area', geographicalAreaFacet, 'No geographic areas found.');
+    createFacets(activeDataToDisplay, 'Time_Coverage', timeCoverageFacet, 'No times found.');
+    createFacets(activeDataToDisplay, 'Institutional_Hosts', institutionalHostsFacet, 'No institutions found.');
 }
 
 // --- Event Handlers ---
@@ -266,18 +283,21 @@ search.addEventListener('keypress', (event) => {
     }
 });
 
-// Refresh button
-refreshBtn.addEventListener('click', () => {
-    search.value = ''; // Clear search input
-    currentActiveFacets = {}; // Clear active facets
-    displayedCount = 0; // Reset pagination
-    filterData(''); // Show all data
-    // Clear URL search parameter
-    const newURL = new URL(window.location.href);
-    newURL.searchParams.delete('q');
-    window.history.pushState(null, '', newURL);
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+// Refresh buttons
+// Convert HTMLCollection to an array or iterate directly (modern browsers)
+Array.from(refreshBtns).forEach(button => {
+    button.addEventListener('click', () => {
+        search.value = ''; // Clear search input
+        currentActiveFacets = {}; // Clear active facets
+        displayedCount = 0; // Reset pagination
+        filterData(''); // Show all data
+        // Clear URL search parameter
+        const newURL = new URL(window.location.href);
+        newURL.searchParams.delete('q');
+        window.history.pushState(null, '', newURL);
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    });
 });
 
 // Load More button
@@ -317,7 +337,7 @@ function createFacets(data, fieldName, targetElement, noDataMessage) {
         });
     });
 
-    const sortedValues = Array.from(counts.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    const sortedValues = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]); // Sort by count (descending)
 
     if (sortedValues.length === 0) {
         targetElement.innerHTML = `<p>${noDataMessage}</p>`;
