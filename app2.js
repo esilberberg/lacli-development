@@ -23,6 +23,8 @@ const formatFacet = document.getElementById('format-facet');
 const countriesFacet = document.getElementById('countries-facet');
 const broadSubjectAreasFacet = document.getElementById('broad-subject-areas-facet');
 const subjectsEngFacet = document.getElementById('subjects-eng-facet');
+const materiasEnEspanolFacet = document.getElementById('materias-en-espanol-facet');
+const assuntosEmPortuguesFacet = document.getElementById('assuntos-em-portugues-facet');
 const languagesFacet = document.getElementById('languages-facet');
 const geographicalAreaFacet = document.getElementById('geographical-area-facet');
 const timeCoverageFacet = document.getElementById('time-coverage-facet');
@@ -267,10 +269,13 @@ function displayData(data, searchQuery, count, refresh) {
     createFacets(activeDataToDisplay, 'Countries', countriesFacet, 'No countries found.');
     createFacets(activeDataToDisplay, 'Broad_Subject_Areas', broadSubjectAreasFacet, 'No subjects found.');
     createFacets(activeDataToDisplay, 'Subjects_in_English', subjectsEngFacet, 'No subjects found.');
+    createFacets(activeDataToDisplay, 'Materias_en_Espanol', materiasEnEspanolFacet, 'No se encontraron.');
+    createFacets(activeDataToDisplay, 'Assuntos_em_Portugues', assuntosEmPortuguesFacet, 'Nenhum assunto encontrado.');
     createFacets(activeDataToDisplay, 'Languages', languagesFacet, 'No languages found.');
     createFacets(activeDataToDisplay, 'Geographical_Area', geographicalAreaFacet, 'No geographic areas found.');
     createFacets(activeDataToDisplay, 'Time_Coverage', timeCoverageFacet, 'No times found.');
     createFacets(activeDataToDisplay, 'Institutional_Hosts', institutionalHostsFacet, 'No institutions found.');
+    
 }
 
 // --- Event Handlers ---
