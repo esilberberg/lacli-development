@@ -19,7 +19,7 @@ const display = document.getElementById('display');
 const search = document.getElementById('library-search');
 
 const resourceTypesFacet = document.getElementById('resource-types-facet');
-const formatFacet = document.getElementById('format-facet');
+const specificFormatsFacet = document.getElementById('specific-formats-facet');
 const countriesFacet = document.getElementById('countries-facet');
 const broadSubjectAreasFacet = document.getElementById('broad-subject-areas-facet');
 const subjectsEngFacet = document.getElementById('subjects-eng-facet');
@@ -53,6 +53,24 @@ let activeDataToDisplay = [];
 // Object to keep track of currently active facet filters.
 // Stores arrays of values for each facet fieldName: { 'fieldName': ['value1', 'value2'] }
 let currentActiveFacets = {};
+
+// Store facet data for sorting (value and count) for each facet field
+let facetDataCache = {}; // e.g., { 'Resource_Types': [['Journal', 10], ['Book', 5]], 'Countries': [...] }
+// Store the current sort order for each facet, default to 'count'
+let currentFacetSortOrder = {
+    'Resource_Types': 'count',
+    'Specific_Formats': 'count',
+    'Countries': 'count',
+    'Broad_Subject_Areas': 'count',
+    'Subjects_in_English': 'count',
+    'Materias_en_Espanol': 'count',
+    'Assuntos_em_Portugues': 'count',
+    'Languages': 'count',
+    'Geographical_Area': 'count',
+    'Time_Coverage': 'count',
+    'Institutional_Hosts': 'count'
+};
+
 
 // Function to remove diacritics from a string
 function removeDiacritics(str) {
@@ -160,7 +178,7 @@ function displayData(data, searchQuery, count, refresh) {
         let dataDisplayHtml = paginatedData.map((object) => {
             const creatorsField = object.Creators ? `
                 <div>
-                    <p>Creators:</p>
+                    <p class="heading-label">Creators:</p>
                     <p>${object.Creators}</p>
                 </div>
             ` : '';
@@ -179,44 +197,46 @@ function displayData(data, searchQuery, count, refresh) {
             <div>
                 <div>
                     <h2><a target="_blank" href="${object.URL || '#'}"><span>${currentItemIndex++}. </span>${object.Resource_Title || 'No Title'}</a></h2>
-                    <p><span>Institutional Hosts: </span>${getTagsHtml(object.Institutional_Hosts, 'Institutional_Hosts')}</p>
-                    <p><span>Broad Subject Areas: </span>${getTagsHtml(object.Broad_Subject_Areas, 'Broad_Subject_Areas')}</p>
-                    <p><span>Countries: </span>${getTagsHtml(object.Countries, 'Countries')}</p>
-                    <p><span>Resource Types: </span>${getTagsHtml(object.Resource_Types, 'Resource_Types')}</p>
+                    <div class="resource-top-line-info">
+                        <p><span class="heading-label">Institutional Hosts: </span>${getTagsHtml(object.Institutional_Hosts, 'Institutional_Hosts')}</p>
+                        <p><span class="heading-label">Broad Subject Areas: </span> ${getTagsHtml(object.Broad_Subject_Areas, 'Broad_Subject_Areas')}</p>
+                        <p><span class="heading-label">Countries: </span> ${getTagsHtml(object.Countries, 'Countries')}</p>
+                        <p><span class="heading-label">Resource Types: </span> ${getTagsHtml(object.Resource_Types, 'Resource_Types')}</p>
+                    </div>
                 </div>
 
                 <div class="accordion-container">
                     <button aria-label="Expand Details" class="resource-accordion">Details +</button>
                     <div class="resource-panel"> <div>
-                            <p>Summary:</p>
+                            <p class="heading-label">Summary:</p>
                             <p>${object.Summary || 'N/A'}</p>
                         </div>
                         <div>
-                            <p>Languages:</p>
+                            <p class="heading-label">Languages:</p>
                             <p>${getTagsHtml(object.Languages, 'Languages')}</p>
                         </div>
                         <div>
-                            <p>Subjects in English:</p>
+                            <p class="heading-label">Subjects in English:</p>
                             <p>${getTagsHtml(object.Subjects_in_English, 'Subjects_in_English')}</p>
                         </div>
                         <div>
-                            <p>Materias en Español:</p>
+                            <p class="heading-label">Materias en Español:</p>
                             <p>${getTagsHtml(object.Materias_en_Espanol, 'Materias_en_Espanol')}</p>
                         </div>
                         <div>
-                            <p>Assuntos em Português:</p>
+                            <p class="heading-label">Assuntos em Português:</p>
                             <p>${getTagsHtml(object.Assuntos_em_Portugues, 'Assuntos_em_Portugues')}</p>
                         </div>
                         <div>
-                            <p>Specific Formats:</p>
+                            <p class="heading-label">Specific Formats:</p>
                             <p>${getTagsHtml(object.Specific_Formats, 'Specific_Formats')}</p>
                         </div>
                         <div>
-                            <p>Geographical Area:</p>
+                            <p class="heading-label">Geographical Area:</p>
                             <p>${getTagsHtml(object.Geographical_Area, 'Geographical_Area')}</p>
                         </div>
                         <div>
-                            <p>Time Coverage:</p>
+                            <p class="heading-label">Time Coverage:</p>
                             <p>${getTagsHtml(object.Time_Coverage, 'Time_Coverage')}</p>
                         </div>
                         ${creatorsField}
@@ -245,9 +265,9 @@ function displayData(data, searchQuery, count, refresh) {
 
     // Update Search Summary (assuming English for now, can be expanded)
     if (searchQuery === '') {
-        displaySearchSummary.textContent = `Showing all ${data.length} records.`;
+        displaySearchSummary.textContent = `${data.length} record${data.length !== 1 ? 's' : ''}`;
     } else {
-        displaySearchSummary.textContent = `A search for “${searchQuery}” returned ${data.length} result${data.length !== 1 ? 's' : ''}.`;
+        displaySearchSummary.textContent = `${data.length} record${data.length !== 1 ? 's' : ''}`;
     }
 
     // Attach event listeners for subject tags (newly rendered or existing)
@@ -265,7 +285,7 @@ function displayData(data, searchQuery, count, refresh) {
 
     // Recreate facets based on the *currentData* to reflect available options
     createFacets(activeDataToDisplay, 'Resource_Types', resourceTypesFacet, 'No resource types found.');
-    createFacets(activeDataToDisplay, 'Specific_Formats', formatFacet, 'No specific formats found.');
+    createFacets(activeDataToDisplay, 'Specific_Formats', specificFormatsFacet, 'No specific formats found.');
     createFacets(activeDataToDisplay, 'Countries', countriesFacet, 'No countries found.');
     createFacets(activeDataToDisplay, 'Broad_Subject_Areas', broadSubjectAreasFacet, 'No subjects found.');
     createFacets(activeDataToDisplay, 'Subjects_in_English', subjectsEngFacet, 'No subjects found.');
@@ -275,7 +295,12 @@ function displayData(data, searchQuery, count, refresh) {
     createFacets(activeDataToDisplay, 'Geographical_Area', geographicalAreaFacet, 'No geographic areas found.');
     createFacets(activeDataToDisplay, 'Time_Coverage', timeCoverageFacet, 'No times found.');
     createFacets(activeDataToDisplay, 'Institutional_Hosts', institutionalHostsFacet, 'No institutions found.');
-    
+   
+    document.querySelectorAll('.sort-btn').forEach(button => {
+        button.removeEventListener('click', handleFacetSortClick); // Prevent duplicate
+        button.addEventListener('click', handleFacetSortClick);
+    });
+    updateSortButtonStyles();
 }
 
 // --- Event Handlers ---
@@ -323,7 +348,8 @@ exportBtn.addEventListener('click', exportJSON);
 // --- Facet Functions ---
 
 // Creates facet lists and attaches click handlers
-function createFacets(data, fieldName, targetElement, noDataMessage) {
+// Creates facet lists and attaches click handlers
+function createFacets(data, fieldName, targetElement, noDataMessage, sortType = 'count') {
     const counts = new Map();
 
     data.forEach(item => {
@@ -342,11 +368,41 @@ function createFacets(data, fieldName, targetElement, noDataMessage) {
         });
     });
 
-    const sortedValues = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]); // Sort by count (descending)
+    let sortedValues = Array.from(counts.entries()); // [ [value, count], ... ]
+
+    // Store this raw sorted data in the cache
+    facetDataCache[fieldName] = sortedValues;
+
+    // Apply sorting based on sortType
+    if (sortType === 'alphabetical') {
+        sortedValues.sort((a, b) => a[0].localeCompare(b[0])); // Sort by value (alphabetical)
+    } else { // default to 'count'
+        sortedValues.sort((a, b) => b[1] - a[1]); // Sort by count (descending)
+    }
 
     if (sortedValues.length === 0) {
-        targetElement.innerHTML = `<p>${noDataMessage}</p>`;
+        // If no data, still ensure sort buttons are present if they were already there
+        const existingSortButtons = targetElement.querySelector('.sort-buttons')?.outerHTML || '';
+        targetElement.innerHTML = existingSortButtons + `<p>${noDataMessage}</p>`;
         return;
+    }
+
+    // Capture existing sort buttons HTML to re-insert them
+    // This line is now more robust. It will look for the sort buttons.
+    // If they exist, it captures their HTML. If not, it constructs them.
+    let sortButtonsHtml = targetElement.querySelector('.sort-buttons')?.outerHTML;
+
+    // If sortButtonsHtml is null (i.e., this is the first time rendering for this facet,
+    // and the buttons aren't yet in the DOM), create the HTML for them.
+    // This assumes the HTML structure of your sort buttons.
+    if (!sortButtonsHtml) {
+        const fieldNameLowercase = fieldName.toLowerCase().replace(/_/g, '-');
+        sortButtonsHtml = `
+            <div class="sort-buttons" data-facet-field="${fieldName}">
+                <button class="sort-btn" data-sort-type="alphabetical">A-Z</button>
+                <button class="sort-btn" data-sort-type="count">1-9</button>
+            </div>
+        `;
     }
 
     const facetsHtml = sortedValues.map(([value, count]) => {
@@ -368,12 +424,20 @@ function createFacets(data, fieldName, targetElement, noDataMessage) {
         `;
     }).join('');
 
-    targetElement.innerHTML = facetsHtml;
+    // Prepend the sort buttons HTML to the facet list
+    targetElement.innerHTML = sortButtonsHtml + facetsHtml;
 
-    // Add event listeners to newly created facet buttons
+    // Add event listeners to newly created facet buttons (excluding sort buttons)
     targetElement.querySelectorAll('.facet').forEach(facetButton => {
         facetButton.removeEventListener('click', runFacetFiltering); // Prevent duplicate listeners
         facetButton.addEventListener('click', runFacetFiltering);
+    });
+
+    // It's also good practice to re-attach listeners to the sort buttons
+    // after re-rendering the facet content, just in case.
+    targetElement.querySelectorAll('.sort-btn').forEach(button => {
+        button.removeEventListener('click', handleFacetSortClick);
+        button.addEventListener('click', handleFacetSortClick);
     });
 }
 
@@ -382,7 +446,7 @@ function updateActiveFacetsSummary() {
     const activeFacetsCount = Object.keys(currentActiveFacets).length;
 
     if (activeFacetsCount > 0) {
-        summaryHtml += '<p><strong>Active Filters:</strong> ';
+        summaryHtml += '<span class="active-facets-label">Active filters: </span>';
         const facetElements = [];
         for (const fieldName in currentActiveFacets) {
             currentActiveFacets[fieldName].forEach(value => {
@@ -455,6 +519,34 @@ function runFacetFiltering(event) {
     filterData(searchQuery); // filterData will reset displayedCount and refresh
 
     // No URL update for facets in this version, only for main search
+}
+
+function handleFacetSortClick(event) {
+    const sortButton = event.currentTarget;
+    const sortType = sortButton.dataset.sortType; // 'alphabetical' or 'count'
+    // Get the parent .sort-buttons div, then get its data-facet-field
+    const fieldName = sortButton.closest('.sort-buttons').dataset.facetField;
+
+    if (fieldName) {
+        currentFacetSortOrder[fieldName] = sortType; // Update the sort order for this facet
+        // Re-render only the specific facet with the new sort order
+        const targetElement = document.getElementById(fieldName.toLowerCase().replace(/_/g, '-') + '-facet'); // Reconstruct the ID
+        // Pass the currently activeDataToDisplay, as facet counts depend on it.
+        createFacets(activeDataToDisplay, fieldName, targetElement, 'No data found.', sortType);
+    }
+    updateSortButtonStyles(); // Update button styles after a sort
+}
+
+// New function to update the active sort button styles
+function updateSortButtonStyles() {
+    document.querySelectorAll('.sort-btn').forEach(button => {
+        button.classList.remove('active-sort');
+        const fieldName = button.closest('.sort-buttons').dataset.facetField;
+        const sortType = button.dataset.sortType;
+        if (currentFacetSortOrder[fieldName] === sortType) {
+            button.classList.add('active-sort');
+        }
+    });
 }
 
 // --- Other Utility Functions ---

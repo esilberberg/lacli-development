@@ -1,0 +1,397 @@
+:root {
+    --primary: #19505D;
+    --light-primary : #257589;
+    --secondary: #54514a;
+    --tertiary: #9B0000;
+    --highlight: #FDEFC8;
+    --lightgray: #f0f0f0;
+    --warmgray: #8A8A8A;
+}
+
+/* General */
+.library-wrapper button {
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+}
+.library-wrapper p {
+    font-size: 1rem;
+    font-family: 'Lato', sans-serif;
+}
+
+.library-wrapper {
+    background-color: var(--lightgray);
+    padding: 3rem 1rem 0 1rem;
+}
+
+.library-content {
+    display: flex;
+}
+
+.library-content section {
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+}
+
+.search-results {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1.5rem;
+    padding: 1rem 2rem 2rem 2rem;
+    width: 100%;
+}
+
+.facets {
+    flex: 0 0 25%;
+    max-width: 25%;
+    max-height: fit-content;
+}
+
+/* Search interface */
+.search-interface {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    max-width: 800px; 
+    min-width: 300px;
+    width: 90%;
+    margin: 0 auto 3rem auto;
+
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    position: relative; /* For positioning the X button */
+    width: 100%; /* Ensure this div takes full width of its parent (which is now responsive) */
+}
+
+#library-search {
+    flex-grow: 1; /* Allows the input to take available space */
+    padding-right: 30px; /* Make space for the X button */
+    padding: 1rem;
+    border: 1px solid var(--secondary);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    min-width: 150px; /* Ensure the input itself doesn't become too small */
+    font-size: 18px;
+    font-family: 'Lato', sans-serif;
+}
+
+#x-btn { /* This targets the 'X' button */
+    position: absolute;
+    right: 140px; /* Adjust this value to position the X button inside the input field, accounting for the "Search" button */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 400;
+    color: #999;
+    padding: 0;
+    font-size: 16px;
+}
+
+#x-btn:hover {
+    color: var(--tertiary);
+}
+
+#library-search-btn {
+    padding: 18px 2rem;
+    background-color: var(--primary);
+    color: white;
+    font-size: 1.1rem;
+    border: none;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    cursor: pointer;
+    flex-shrink: 0; /* Prevent the search button from shrinking */
+}
+
+#search-help-btn {
+    border: none;
+    font-size: 1.7rem;
+    color: var(--primary);
+    padding-left: 20px;
+}
+
+#search-help-btn:hover {
+    color: var(--light-primary);
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: white;
+  margin: auto;
+  padding: 2rem;
+  border: 10px solid var(--secondary);
+  color: black;
+  width: 80%;
+}
+
+/* The Close Button */
+.search-help-btn-close {
+  color: var(--tertiary);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  border: 3px solid var(--tertiary);
+  padding: 0 6px;
+}
+
+.search-help-btn-close:hover,
+.search-help-btn-close:focus {
+  color: #000;
+  border: 3px solid #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.search-interface-utilities {
+    display: flex;
+    justify-content: flex-start; 
+    gap: 10px;
+}
+
+.search-interface-utilities > button {
+    padding: 8px 12px;
+    background-color: var(--secondary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    flex-shrink: 0; 
+}
+
+/* Optional: Hover effects for buttons */
+#library-search-btn:hover,
+.search-interface-utilities > button:hover {
+    background-color: var(--light-primary);
+}
+
+/* Search Summary display */
+.search-summary{
+    display: flex;
+    gap: 50px;
+    margin-bottom: 1rem;
+}
+#displaySearchSummary {
+    font-size: 1.5rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+}
+
+.active-facets-label {
+    font-family: 'Lato', sans-serif;
+}
+
+#activeFacetsSummary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.active-facet-tag {
+    border: 1px solid var(--light-primary);
+    padding: 5px 8px;
+    border-radius: 5px;
+    color: var(--light-primary);
+}
+.active-facet-tag:hover {
+    border: 1px solid var(--secondary);
+    color: var(--secondary);
+}
+
+
+.lacli-resources-display {
+    /* flex: 1;  */
+    min-width: 0;
+
+}
+#export-btn {
+    margin-left: auto;
+    margin-bottom: 1rem;
+    width: fit-content;
+    background-color: var(--warmgray);
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+#export-btn:hover {
+    background-color: var(--light-primary);
+}
+
+
+/* Facet Accordion Styles */
+.facet-accordion-header {
+    cursor: pointer;
+    padding: 10px;
+    font-family: 'Lato', sans-serif;
+    border-bottom: 3px solid var(--lightgray);
+    user-select: none; /* Prevent text selection on double-click */
+}
+
+.facet-accordion-header:hover {
+    text-decoration: underline;
+}
+
+.facet-accordion-content {
+    max-height: 0;
+    overflow: hidden; /* Important for the transition and for hiding overflow when closed */
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    padding: 0 10px;
+    box-sizing: border-box; 
+    position: relative; 
+}
+
+.facet-accordion-content.active {
+    max-height: 300px;
+    overflow-y: auto; /* Adds scrollbar when content exceeds max-height */
+    padding: 35px 10px; /* Adjust if needed to ensure space for buttons */
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: var(--primary);
+}
+
+
+/* Styles for the sort buttons container */
+.sort-buttons {
+    position: absolute; /* Position relative to .facet-accordion-content */
+    top: 5px; /* Distance from the top of the .facet-accordion-content */
+    right: 10px; /* Distance from the right of the .facet-accordion-content (matches its padding) */
+    display: flex; /* Arrange buttons side-by-side */
+    gap: 5px; /* Space between A-Z and 1-9 buttons */
+    z-index: 10; /* Ensure buttons are layered above other content if there's overlap */
+}
+
+.sort-btn {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    padding: 3px 8px;
+    font-size: 0.7em; 
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.sort-btn:hover {
+    background-color: #ddd;
+}
+
+.sort-btn.active-sort {
+    background-color: var(--primary); 
+    color: white;
+    border-color: var(--primary);
+}
+
+.facet {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    color: var(--primary);
+}
+
+.facet:hover, .facet.active {
+    color: var(--tertiary);
+}
+
+
+
+
+
+
+/* Styles for resource display */
+#display > div {
+    border-bottom: 4px solid var(--lightgray);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 200;
+}
+
+#display a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+#display h2 {
+    font-family: 'EB Garamond', serif;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+
+#display a:hover {
+    color: var(--tertiary);
+}
+
+.heading-label {
+    font-weight: 400;
+}
+
+#display button {
+    background-color: transparent;
+    border: none;
+    text-decoration: underline;
+    font-weight: 100;
+}
+
+.resource-top-line-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#display button:hover {
+    color: var(--tertiary);
+}
+
+/* Styles for the resource display accordion */
+
+.resource-accordion {
+    cursor: pointer;
+    background-color: var(--primary) !important;
+    border-radius: 10px;
+    padding: 5px 10px;
+    text-decoration: none !important;
+    color: white;
+    margin-top: 1rem;
+}
+
+.resource-accordion:hover {
+    color: white !important;
+    background-color: var(--light-primary) !important;
+}
+
+.resource-panel {
+    padding-top: 1rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+    box-sizing: border-box; /* Ensure padding is included in height calculations */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+/* .resource-panel.active {
+    max-height: none !important;
+} */
