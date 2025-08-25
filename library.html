@@ -35,6 +35,7 @@
     <title>LACLI</title>
 </head>
 <body>
+    <div class="overlay"></div>
     <header id="header-main"></header>
     <!-- <div id="message-box">
     <p id="message-content"></p>
@@ -71,6 +72,8 @@
         <div class="search-interface-utilities">
             <button class="refresh-btn">New Search</button>
             <button id="random-btn">Random</button>
+            <button id="filters-btn">Filters <i class="fa-solid fa-filter"></i></button>
+
         </div>
     </section>
           <div class="search-summary">
@@ -111,7 +114,7 @@
         ];
 
         // Start building the HTML string for the facets content (without the outer section tags)
-        let facetsContentHtml = '';
+        let facetsContentHtml = '<div id="facets-mobile-panel-heading"><button id="close-facets-btn">X</button></div>';
 
         // Loop through the facet data to create HTML for each facet block
         facetsData.forEach(facet => {
@@ -180,8 +183,63 @@ window.onclick = function(event) {
   }
 }
 </script>
+<script>
+// Filters Mobile Panel
+const closeFacetsBtn = document.querySelector("#close-facets-btn");
+const openFacetsBtn = document.querySelector("#filters-btn");
+const facets = document.querySelector(".facets");
+const overlay = document.querySelector(".overlay"); 
 
- 
+// Event listener to open the facets panel and show the overlay
+openFacetsBtn.addEventListener("click", () => {
+  if (facets) {
+    facets.style.display = "inline";
+  }
+  if (overlay) {
+    overlay.classList.add('visible');
+  }
+});
+
+// Event listener to close the facets panel and hide the overlay
+closeFacetsBtn.addEventListener("click", () => {
+  if (facets) {
+    facets.style.display = "none";
+  }
+  if (overlay) {
+    overlay.classList.remove('visible');
+  }
+});
+
+// Event listener for screen resizing
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 800) {
+    if (facets) {
+      facets.style.display = ''; // This removes the inline style and lets CSS take over
+    }
+    if (overlay) {
+      overlay.classList.remove('visible');
+    }
+  } else {
+    if (facets && facets.style.display === "none") {
+      if (overlay) {
+        overlay.classList.remove('visible');
+      }
+    }
+  }
+});
+
+// Optional: Add a click listener to the overlay to close the facets panel
+if (overlay) {
+  overlay.addEventListener('click', () => {
+    if (facets) {
+      facets.style.display = "none";
+    }
+    if (overlay) {
+      overlay.classList.remove('visible');
+    }
+  });
+}
+</script>
 
     </main>
     <footer class="footer-secondary">

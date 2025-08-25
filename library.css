@@ -61,6 +61,12 @@
 
 }
 
+@media only screen and (max-width: 800px) {
+    .search-interface {
+        margin: 0 0 3rem 0;
+    }
+}
+
 .search-bar {
     display: flex;
     align-items: stretch;
@@ -203,11 +209,28 @@
 }
 
 /* Search Summary display */
-.search-summary{
+.search-summary {
     display: flex;
     gap: 50px;
     margin-bottom: 1rem;
 }
+
+@media only screen and (max-width: 800px) {
+    .search-summary {
+        display: flex;
+        flex-direction: column;
+        /* flex-direction: column-reverse; */
+        gap: 10px;
+        margin-bottom: 1rem;
+    }
+    #activeFacetsSummary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 4px !important;
+    }
+}
+
 #displaySearchSummary {
     font-size: 1.5rem;
     font-family: 'Lato', sans-serif;
@@ -221,6 +244,7 @@
 #activeFacetsSummary {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
@@ -230,6 +254,7 @@
     border-radius: 5px;
     color: var(--light-primary);
 }
+
 .active-facet-tag:hover {
     border: 1px solid var(--secondary);
     color: var(--secondary);
@@ -337,6 +362,9 @@
 
 .facet-list-scroll-container {
     padding: 5px 10px 0 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .facet {
@@ -351,7 +379,74 @@
     color: var(--tertiary);
 }
 
+/* Mobile responsive facets bar */
+#filters-btn, #facets-mobile-panel-heading {
+    display: none;
+}
 
+#close-facets-btn {
+    background-color: transparent;
+    cursor: pointer;
+    border: none;
+    color: white;
+    font-weight: 800;
+    width: 100%;
+    padding: 10px 20px;
+    text-align: right;
+}
+
+@media only screen and (max-width: 800px) {
+    #filters-btn {
+        display: inline;
+    }
+    #facets-mobile-panel-heading {
+        display: none;
+        background-color: var(--light-primary);
+        display: flex;
+        justify-content: center; 
+    }
+
+    .library-content section {
+        background-color: white;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        border-radius: 5px;
+        margin-bottom: 2rem;
+    }
+
+    .search-results {
+        margin-left: 0;
+    } 
+    .facets {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        top: 50px;
+        left: 0;
+        transition: 0.5s;
+        /* display: none; */
+        flex: none;
+        max-width: 400px;
+        max-height: none;
+    }
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 98; /* Make sure it's on top of everything except the facets panel */
+    display: none; 
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.overlay.visible {
+    display: block;
+    opacity: 1;
+}
 
 /* Styles for resource display */
 #display > div {
