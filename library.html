@@ -56,12 +56,14 @@
         <!-- Modal content -->
         <div class="modal-content">
             <span class="search-help-btn-close">&times;</span>
-            <p>Information on how searching works</p>
+            <div class="modal-heading">About LACLI Search</div>
             <ul>
-                <li>Do this</li>
-                <li>Do that</li>
-                <li>Don't do this</li>
-                <li>Don't do that</li>
+                <li>Searches are not case sensitive and ignore diacritics.</li>
+                <li>Truncation, wildcards, quotation marks, and lemmatization are not supported.</li>
+                <li>It is preferable to search with singular rather than plural nouns.</li>
+                <li>Search terms separated by a space are treated as independent search terms and are linked with the AND operator.</li>
+                <li>All search terms must appear somewhere in the resource description fields for a resource to be returned in the results.</li>
+                <li>To save a search, copy the url from the results page or use the Download Records button to download the results as a JSON file.</li>
             </ul>
         </div>
 
@@ -95,17 +97,17 @@
 <script>
         // Define the data for each facet section
         const facetsData = [
-            { header: 'Resource Type +', id: 'resource-types-facet', lacliField: 'Resource_Types' },
-            { header: 'Format +', id: 'specific-formats-facet', lacliField: 'Specific_Formats' },
-            { header: 'Country +', id: 'countries-facet', lacliField: 'Countries' },
-            { header: 'Broad Subject +', id: 'broad-subject-areas-facet', lacliField: 'Broad_Subject_Areas' },
-            { header: 'Subjects in English +', id: 'subjects-eng-facet', lacliField: 'Subjects_in_English' },
-            { header: 'Materias en Español +', id: 'materias-en-espanol-facet', lacliField: 'Materias_en_Espanol' },
-            { header: 'Assuntos em Portugues +', id: 'assuntos-em-portugues-facet', lacliField: 'Assuntos_em_Portugues' },
-            { header: 'Language +', id: 'languages-facet', lacliField: 'Languages' },
-            { header: 'Geographic Area +', id: 'geographical-area-facet', lacliField: 'Geographical_Area' },
-            { header: 'Time +', id: 'time-coverage-facet', lacliField: 'Time_Coverage' },
-            { header: 'Institutional Host +', id: 'institutional-host-facet', lacliField: 'Institutional_Hosts' }
+            { header: 'Resource Type', id: 'resource-types-facet', lacliField: 'Resource_Types' },
+            { header: 'Format', id: 'specific-formats-facet', lacliField: 'Specific_Formats' },
+            { header: 'Country', id: 'countries-facet', lacliField: 'Countries' },
+            { header: 'Broad Subject', id: 'broad-subject-areas-facet', lacliField: 'Broad_Subject_Areas' },
+            { header: 'Subjects in English', id: 'subjects-in-english-facet', lacliField: 'Subjects_in_English' },
+            { header: 'Materias en Español', id: 'materias-en-espanol-facet', lacliField: 'Materias_en_Espanol' },
+            { header: 'Assuntos em Portugues', id: 'assuntos-em-portugues-facet', lacliField: 'Assuntos_em_Portugues' },
+            { header: 'Language', id: 'languages-facet', lacliField: 'Languages' },
+            { header: 'Geographic Area', id: 'geographical-area-facet', lacliField: 'Geographical_Area' },
+            { header: 'Time Coverage', id: 'time-coverage-facet', lacliField: 'Time_Coverage' },
+            { header: 'Institutional Host', id: 'institutional-hosts-facet', lacliField: 'Institutional_Hosts' }
         ];
 
         // Start building the HTML string for the facets content (without the outer section tags)
@@ -116,12 +118,14 @@
             // Accessing the property using bracket notation since the key has a hyphen
             facetsContentHtml += `
                 <div>
-                    <p class="facet-accordion-header">${facet.header}</p>
+                    <p class="facet-accordion-header">${facet.header} <span class="accordion-icon">+</span></p>
                     <div id="${facet.id}" class="facet-accordion-content">
                         <div class="sort-buttons" data-facet-field="${facet.lacliField}">
                             <button class="sort-btn" data-sort-type="alphabetical">A-Z</button>
                             <button class="sort-btn" data-sort-type="count">1-9</button>
-                        </div>
+                        <div class="facet-list-scroll-container"></div>
+                    </div>
+                        
                         <p>Loading...</p>
                     </div>
                 </div>
@@ -176,6 +180,7 @@ window.onclick = function(event) {
   }
 }
 </script>
+
  
 
     </main>

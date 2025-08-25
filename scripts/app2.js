@@ -22,13 +22,13 @@ const resourceTypesFacet = document.getElementById('resource-types-facet');
 const specificFormatsFacet = document.getElementById('specific-formats-facet');
 const countriesFacet = document.getElementById('countries-facet');
 const broadSubjectAreasFacet = document.getElementById('broad-subject-areas-facet');
-const subjectsEngFacet = document.getElementById('subjects-eng-facet');
+const subjectsEngFacet = document.getElementById('subjects-in-english-facet');
 const materiasEnEspanolFacet = document.getElementById('materias-en-espanol-facet');
 const assuntosEmPortuguesFacet = document.getElementById('assuntos-em-portugues-facet');
 const languagesFacet = document.getElementById('languages-facet');
 const geographicalAreaFacet = document.getElementById('geographical-area-facet');
 const timeCoverageFacet = document.getElementById('time-coverage-facet');
-const institutionalHostsFacet = document.getElementById('institutional-host-facet');
+const institutionalHostsFacet = document.getElementById('institutional-hosts-facet');
 
 const activeFacetsSummary = document.getElementById('activeFacetsSummary');
 
@@ -403,6 +403,7 @@ function createFacets(data, fieldName, targetElement, noDataMessage, sortType = 
                 <button class="sort-btn" data-sort-type="count">1-9</button>
             </div>
         `;
+
     }
 
     const facetsHtml = sortedValues.map(([value, count]) => {
@@ -424,8 +425,9 @@ function createFacets(data, fieldName, targetElement, noDataMessage, sortType = 
         `;
     }).join('');
 
+    const scrollableContentHtml = `<div class="facet-list-scroll-container">${facetsHtml}</div>`;
     // Prepend the sort buttons HTML to the facet list
-    targetElement.innerHTML = sortButtonsHtml + facetsHtml;
+    targetElement.innerHTML = sortButtonsHtml + scrollableContentHtml;
 
     // Add event listeners to newly created facet buttons (excluding sort buttons)
     targetElement.querySelectorAll('.facet').forEach(facetButton => {
@@ -620,3 +622,4 @@ function handleAccordionClick() {
         panel.classList.add('active'); // Add for padding transition
     }
 }
+
