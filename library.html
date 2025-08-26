@@ -64,15 +64,16 @@
                 <li>It is preferable to search with singular rather than plural nouns.</li>
                 <li>Search terms separated by a space are treated as independent search terms and are linked with the AND operator.</li>
                 <li>All search terms must appear somewhere in the resource description fields for a resource to be returned in the results.</li>
-                <li>To save a search, copy the url from the results page or use the Download button to download the results as a JSON file.</li>
+                <li>If you select filters from the same filter category (e.g., Countries), the filters are joined by an OR operator. If you select filters from different filter categories (e.g., Formats & Countries), the filters are joined by an AND operator.</li>
+                <li>There are two ways to save a search. First, copy the url. Only keywords, and not filters, are captured in the url. Second, download the records currently displayed as a JSON file via the Download button.</li>
             </ul>
         </div>
 
         </div>
         <div class="search-interface-utilities">
-            <button class="refresh-btn">New Search &nbsp;<i class="fa-solid fa-arrow-rotate-right"></i></button>
-            <button id="random-btn">Random &nbsp;<i class="fa-solid fa-bolt"></i></button>
-            <button id="filters-btn">Filters &nbsp;<i class="fa-solid fa-sliders"></i></button>
+            <button class="refresh-btn"><span id="refresh-btn-text">New Search</span> &nbsp;<i class="fa-solid fa-arrow-rotate-right"></i></button>
+            <button id="random-btn"><span id="random-btn-text">Random</span> &nbsp;<i class="fa-solid fa-bolt"></i></button>
+            <button id="filters-btn"><span id="filters-btn-text">Filters</span> &nbsp;<i class="fa-solid fa-sliders"></i></button>
 
         </div>
     </section>
@@ -83,7 +84,7 @@
     <div class="library-content">
         <section class="facets"></section>
         <section class="search-results">
-            <button id="export-btn">Download &nbsp;<i class="fa-solid fa-download"></i></button>
+            <button id="export-btn"><span id="export-btn-text">Download</span> &nbsp;<i class="fa-solid fa-download"></i></button>
             <div class="lacli-resources-display">
                 
                 <div id="display">
@@ -100,15 +101,15 @@
 <script>
         // Define the data for each facet section
         const facetsData = [
-            { header: 'Resource Type', id: 'resource-types-facet', lacliField: 'Resource_Types' },
-            { header: 'Format', id: 'specific-formats-facet', lacliField: 'Specific_Formats' },
-            { header: 'Country', id: 'countries-facet', lacliField: 'Countries' },
-            { header: 'Broad Subject', id: 'broad-subject-areas-facet', lacliField: 'Broad_Subject_Areas' },
+            { header: 'Resource Types', id: 'resource-types-facet', lacliField: 'Resource_Types' },
+            { header: 'Formats', id: 'specific-formats-facet', lacliField: 'Specific_Formats' },
+            { header: 'Countries', id: 'countries-facet', lacliField: 'Countries' },
+            { header: 'Broad Subjects', id: 'broad-subject-areas-facet', lacliField: 'Broad_Subject_Areas' },
             { header: 'Subjects in English', id: 'subjects-in-english-facet', lacliField: 'Subjects_in_English' },
             { header: 'Materias en Español', id: 'materias-en-espanol-facet', lacliField: 'Materias_en_Espanol' },
             { header: 'Assuntos em Portugues', id: 'assuntos-em-portugues-facet', lacliField: 'Assuntos_em_Portugues' },
-            { header: 'Language', id: 'languages-facet', lacliField: 'Languages' },
-            { header: 'Geographic Area', id: 'geographical-area-facet', lacliField: 'Geographical_Area' },
+            { header: 'Languages', id: 'languages-facet', lacliField: 'Languages' },
+            { header: 'Geographical Area', id: 'geographical-area-facet', lacliField: 'Geographical_Area' },
             { header: 'Time Coverage', id: 'time-coverage-facet', lacliField: 'Time_Coverage' },
             { header: 'Institutional Host', id: 'institutional-hosts-facet', lacliField: 'Institutional_Hosts' }
         ];

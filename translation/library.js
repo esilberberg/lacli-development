@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     const languageNavbar = document.getElementById('language-navbar');
     const librarySearch = document.getElementById('library-search');
-    const refreshBtn = document.getElementById('refresh');
-    const randomBtn = document.getElementById('random');
-    const exportBtn = document.getElementById('export');
+    const refreshBtn = document.getElementById('refresh-btn-text');
+    const randomBtn = document.getElementById('random-btn-text');
+    const exportBtn = document.getElementById('export-btn-text');
 
   
     const storedLanguage = localStorage.getItem('lacliLanguagePreference');
@@ -30,15 +30,15 @@ document.addEventListener('DOMContentLoaded', function () {
       const translations = {
         en: {
           placeholder: 'Search terms',
-          refresh: 'Refresh',
+          refresh: 'New Search',
           random: 'Random',
-          export: 'Export',
+          export: 'Download',
         },
         es: {
           placeholder: 'Términos de búsqueda',
           refresh: 'Actualizar',
           random: 'Aleatorio',
-          export: 'Exportar',
+          export: 'Descargar',
         },
         pt: {
           placeholder: 'Termos pesquisados',
