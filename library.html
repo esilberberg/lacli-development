@@ -47,7 +47,7 @@
     <section class="search-interface">
         <div class="search-bar">
             <input type="text" id="library-search" placeholder="Enter keywords...">
-            <button class="refresh-btn" id="x-btn">X</button>
+            <button class="refresh-btn" id="x-btn"><i class="fa-solid fa-xmark"></i></button>
             <button id="library-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
             <button id="search-help-btn" title="Search help"><i class="fa-regular fa-circle-question"></i></button>
         </div>
@@ -56,7 +56,7 @@
 
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="search-help-btn-close">&times;</span>
+            <span class="search-help-btn-close"><i class="fa-solid fa-xmark"></i></span>
             <div class="modal-heading">About LACLI Search</div>
             <ul>
                 <li>Searches are not case sensitive and ignore diacritics.</li>
@@ -64,15 +64,15 @@
                 <li>It is preferable to search with singular rather than plural nouns.</li>
                 <li>Search terms separated by a space are treated as independent search terms and are linked with the AND operator.</li>
                 <li>All search terms must appear somewhere in the resource description fields for a resource to be returned in the results.</li>
-                <li>To save a search, copy the url from the results page or use the Download Records button to download the results as a JSON file.</li>
+                <li>To save a search, copy the url from the results page or use the Download button to download the results as a JSON file.</li>
             </ul>
         </div>
 
         </div>
         <div class="search-interface-utilities">
-            <button class="refresh-btn">New Search</button>
-            <button id="random-btn">Random</button>
-            <button id="filters-btn">Filters <i class="fa-solid fa-filter"></i></button>
+            <button class="refresh-btn">New Search &nbsp;<i class="fa-solid fa-arrow-rotate-right"></i></button>
+            <button id="random-btn">Random &nbsp;<i class="fa-solid fa-bolt"></i></button>
+            <button id="filters-btn">Filters &nbsp;<i class="fa-solid fa-sliders"></i></button>
 
         </div>
     </section>
@@ -83,7 +83,7 @@
     <div class="library-content">
         <section class="facets"></section>
         <section class="search-results">
-            <button id="export-btn">Download Records &nbsp;<i class="fa-solid fa-download"></i></button>
+            <button id="export-btn">Download &nbsp;<i class="fa-solid fa-download"></i></button>
             <div class="lacli-resources-display">
                 
                 <div id="display">
@@ -114,7 +114,7 @@
         ];
 
         // Start building the HTML string for the facets content (without the outer section tags)
-        let facetsContentHtml = '<div id="facets-mobile-panel-heading"><button id="close-facets-btn">X</button></div>';
+        let facetsContentHtml = '<div id="facets-mobile-panel-heading"><button id="close-facets-btn"><i class="fa-solid fa-xmark"></i></button></div>';
 
         // Loop through the facet data to create HTML for each facet block
         facetsData.forEach(facet => {
