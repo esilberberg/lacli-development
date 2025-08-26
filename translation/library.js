@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const refreshBtn = document.getElementById('refresh-btn-text');
     const randomBtn = document.getElementById('random-btn-text');
     const exportBtn = document.getElementById('export-btn-text');
+    const filtersBtn = document.getElementById('filters-btn-text');
+
+
 
   
     const storedLanguage = localStorage.getItem('lacliLanguagePreference');
@@ -33,18 +36,22 @@ document.addEventListener('DOMContentLoaded', function () {
           refresh: 'New Search',
           random: 'Random',
           export: 'Download',
+          filters: 'Filters',
         },
         es: {
           placeholder: 'Términos de búsqueda',
           refresh: 'Actualizar',
           random: 'Aleatorio',
           export: 'Descargar',
+          filters: 'Filtros',
+
         },
         pt: {
           placeholder: 'Termos pesquisados',
           refresh: 'Atualizar',
           random: 'Aleatório',
           export: 'Exportar',
+          filters: 'Filtros',
         },
       };
   
@@ -52,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
       refreshBtn.textContent = translations[language].refresh;
       randomBtn.textContent = translations[language].random;
       exportBtn.textContent = translations[language].export;
+      filtersBtn.textContent = translations[language].filters;
 
     }
   
