@@ -58,14 +58,21 @@
         <div class="modal-content">
             <span class="search-help-btn-close"><i class="fa-solid fa-xmark"></i></span>
             <div class="modal-heading">About LACLI Search</div>
+            <h3><i class="fa-solid fa-magnifying-glass"></i> Keywords</h3>
             <ul>
                 <li>Searches are not case sensitive and ignore diacritics.</li>
                 <li>Truncation, wildcards, quotation marks, and lemmatization are not supported.</li>
                 <li>It is preferable to search with singular rather than plural nouns.</li>
-                <li>Search terms separated by a space are treated as independent search terms and are linked with the AND operator.</li>
-                <li>All search terms must appear somewhere in the resource description fields for a resource to be returned in the results.</li>
-                <li>If you select filters from the same filter category (e.g., Countries), the filters are joined by an OR operator. If you select filters from different filter categories (e.g., Formats & Countries), the filters are joined by an AND operator.</li>
-                <li>There are two ways to save a search. First, copy the url. Only keywords, and not filters, are captured in the url. Second, download the records currently displayed as a JSON file via the Download button.</li>
+                <li>Search terms separated by a space are treated as independent search terms and are linked with the AND operator. Therefore, all search terms must appear in at least one description field for a resource to be returned in the results.</li>
+            </ul>
+            <h3><i class="fa-solid fa-sliders"></i> Filters</h3>
+            <ul>
+              <li>When a user selects multiple values from the same filter, such as two languages, LACLI uses OR logic. This means it shows results that match at least one of the selected values (e.g., Spanish OR English).</li>
+              <li>When a user selects values from different filters, like a format and a language, LACLI uses AND logic. This narrows the results to only those that match all of the selected criteria (e.g., Books AND Spanish).</li>
+            </ul>
+            <h3><i class="fa-solid fa-floppy-disk"></i> Saving</h3>
+            <ul>
+              <li>There are two ways to save a search. First, copy the url. Only keywords, and not filters, are captured in the url. Second, download the records currently displayed as a JSON file to your computer via the Download button.</li>
             </ul>
         </div>
 
@@ -109,9 +116,9 @@
             { header: 'Materias en Español', id: 'materias-en-espanol-facet', lacliField: 'Materias_en_Espanol' },
             { header: 'Assuntos em Portugues', id: 'assuntos-em-portugues-facet', lacliField: 'Assuntos_em_Portugues' },
             { header: 'Languages', id: 'languages-facet', lacliField: 'Languages' },
-            { header: 'Geographical Area', id: 'geographical-area-facet', lacliField: 'Geographical_Area' },
+            { header: 'Geographical Areas', id: 'geographical-area-facet', lacliField: 'Geographical_Area' },
             { header: 'Time Coverage', id: 'time-coverage-facet', lacliField: 'Time_Coverage' },
-            { header: 'Institutional Host', id: 'institutional-hosts-facet', lacliField: 'Institutional_Hosts' }
+            { header: 'Institutional Hosts', id: 'institutional-hosts-facet', lacliField: 'Institutional_Hosts' }
         ];
 
         // Start building the HTML string for the facets content (without the outer section tags)
