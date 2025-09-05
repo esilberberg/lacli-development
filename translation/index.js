@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateContentLanguage(language) {
       const translations = {
         en: {
-          hero: 'Explore a repository of free online resources for Latin American, Caribbean, Latinx, and Iberian studies.',
+          hero: 'Explore a directory of free online resources for Latin American, Caribbean, Latinx, and Iberian studies.',
           placeholder: 'Search...',
           students: 'Students',
           studentsDescription: 'Explore collections by subject, country, language, time period and more to support original research projects.',
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
           collaboratingInstitutions: 'Collaborating Institutions',
         },
         es: {
-          hero: 'Explore un repositorio de recursos gratuitos en línea para estudios sobre América Latina, el Caribe, los Latinos de los Estados Unidos, y la Península Ibérica.',
+          hero: 'Explore un directorio de recursos gratuitos en línea para estudios sobre América Latina, el Caribe, los Latinos de los Estados Unidos, y la Península Ibérica.',
           placeholder: 'Buscar...',
           students: 'Estudiantes',
           studentsDescription: 'Explore colecciones organizadas por tema, país, idioma, período de tiempo y más, para apoyar proyectos de investigación originales.',
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
           collaboratingInstitutions: 'Instituciones colaboradoras',
         },
         pt: {
-          hero: 'Pesquise em um repositório com recursos online e abertos sobre América Latina, Caribe, Estudos Ibéricos e Latinos.',
+          hero: 'Pesquise em um diretório com recursos online e abertos sobre América Latina, Caribe, Estudos Ibéricos e Latinos.',
           placeholder: 'Pesquisar...',
           students: 'Estudantes',
           studentsDescription: 'Explore coleções por assuntos, país, idioma, recorte temporal e outras fontes para auxiliar nos projetos de pesquisa.',

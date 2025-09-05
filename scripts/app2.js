@@ -189,15 +189,13 @@ function displayData(data, searchQuery, count, refresh) {
                 // Use fieldKey for the data-field attribute
                 return values.map(val => `<button class="${className}" data-field-name="${fieldKey}" data-value="${val.trim()}">${val.trim()}</button>`).join('&ensp; ');
             };
-
-
             return `
             <div>
                 <div>
                     <h2><a target="_blank" href="${object.URL || '#'}"><span>${currentItemIndex++}. </span>${object.Resource_Title || 'No Title'}</a></h2>
                     <div class="resource-top-line-info">
                         <p><span class="heading-label">Institutional Hosts: </span>${getTagsHtml(object.Institutional_Hosts, 'Institutional_Hosts')}</p>
-                        <p><span class="heading-label">Broad Subject Areas: </span> ${getTagsHtml(object.Broad_Subject_Areas, 'Broad_Subject_Areas')}</p>
+                        <p><span class="heading-label">Broad Subjects: </span> ${getTagsHtml(object.Broad_Subject_Areas, 'Broad_Subject_Areas')}</p>
                         <p><span class="heading-label">Countries: </span> ${getTagsHtml(object.Countries, 'Countries')}</p>
                         <p><span class="heading-label">Resource Types: </span> ${getTagsHtml(object.Resource_Types, 'Resource_Types')}</p>
                     </div>
@@ -226,11 +224,11 @@ function displayData(data, searchQuery, count, refresh) {
                             <p>${getTagsHtml(object.Assuntos_em_Portugues, 'Assuntos_em_Portugues')}</p>
                         </div>
                         <div>
-                            <p class="heading-label">Specific Formats:</p>
+                            <p class="heading-label">Formats:</p>
                             <p>${getTagsHtml(object.Specific_Formats, 'Specific_Formats')}</p>
                         </div>
                         <div>
-                            <p class="heading-label">Geographical Area:</p>
+                            <p class="heading-label">Geographical Areas:</p>
                             <p>${getTagsHtml(object.Geographical_Area, 'Geographical_Area')}</p>
                         </div>
                         <div>
