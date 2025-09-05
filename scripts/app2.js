@@ -50,13 +50,11 @@ const itemsPerPage = 15; // Number of items to display per page
 let initialData = [];
 // Stores the currently filtered/displayed dataset (for pagination and export)
 let activeDataToDisplay = [];
-// Object to keep track of currently active facet filters.
 // Stores arrays of values for each facet fieldName: { 'fieldName': ['value1', 'value2'] }
 let currentActiveFacets = {};
 
 // Store facet data for sorting (value and count) for each facet field
 let facetDataCache = {}; // e.g., { 'Resource_Types': [['Journal', 10], ['Book', 5]], 'Countries': [...] }
-// Store the current sort order for each facet, default to 'count'
 let currentFacetSortOrder = {
     'Resource_Types': 'count',
     'Specific_Formats': 'count',
@@ -77,7 +75,7 @@ function removeDiacritics(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-// --- URL Search Parameter Handling on Page Load ---
+// --- URL Search Parameter on Page Load ---
 // Get search terms from URL and display in search bar on page load
 const searchURL = window.location.href;
 const urlParams = new URL(searchURL).searchParams;
@@ -263,14 +261,14 @@ function displayData(data, searchQuery, count, refresh) {
         loadMoreBtn.style.display = 'none';
     }
 
-    // Update Search Summary (assuming English for now, can be expanded)
+    // Update Search Summary
     if (searchQuery === '') {
         displaySearchSummary.textContent = `${data.length} record${data.length !== 1 ? 's' : ''}`;
     } else {
         displaySearchSummary.textContent = `${data.length} record${data.length !== 1 ? 's' : ''}`;
     }
 
-    // Attach event listeners for subject tags (newly rendered or existing)
+    // Attach event listeners for subject tags
     document.querySelectorAll('.subject-tag').forEach(subjectLink => {
         subjectLink.removeEventListener('click', handleSubjectTagClick); // Prevent duplicate listeners
         subjectLink.addEventListener('click', handleSubjectTagClick);
@@ -283,7 +281,7 @@ function displayData(data, searchQuery, count, refresh) {
         acc[i].addEventListener("click", handleAccordionClick);
     }
 
-    // Recreate facets based on the *currentData* to reflect available options
+    // Recreate facets based on the currentData
     createFacets(activeDataToDisplay, 'Resource_Types', resourceTypesFacet, 'No resource types found.');
     createFacets(activeDataToDisplay, 'Specific_Formats', specificFormatsFacet, 'No specific formats found.');
     createFacets(activeDataToDisplay, 'Countries', countriesFacet, 'No countries found.');
@@ -314,7 +312,6 @@ search.addEventListener('keypress', (event) => {
 });
 
 // Refresh buttons
-// Convert HTMLCollection to an array or iterate directly (modern browsers)
 Array.from(refreshBtns).forEach(button => {
     button.addEventListener('click', () => {
         search.value = ''; // Clear search input
@@ -346,9 +343,6 @@ randomBtn.addEventListener('click', getRandomResource);
 exportBtn.addEventListener('click', exportJSON);
 
 // --- Facet Functions ---
-
-// Creates facet lists and attaches click handlers
-// Creates facet lists and attaches click handlers
 function createFacets(data, fieldName, targetElement, noDataMessage, sortType = 'count') {
     const counts = new Map();
 
@@ -388,13 +382,9 @@ function createFacets(data, fieldName, targetElement, noDataMessage, sortType = 
     }
 
     // Capture existing sort buttons HTML to re-insert them
-    // This line is now more robust. It will look for the sort buttons.
-    // If they exist, it captures their HTML. If not, it constructs them.
     let sortButtonsHtml = targetElement.querySelector('.sort-buttons')?.outerHTML;
 
-    // If sortButtonsHtml is null (i.e., this is the first time rendering for this facet,
-    // and the buttons aren't yet in the DOM), create the HTML for them.
-    // This assumes the HTML structure of your sort buttons.
+    // If sortButtonsHtml is null 
     if (!sortButtonsHtml) {
         const fieldNameLowercase = fieldName.toLowerCase().replace(/_/g, '-');
         sortButtonsHtml = `
@@ -407,7 +397,6 @@ function createFacets(data, fieldName, targetElement, noDataMessage, sortType = 
     }
 
     const facetsHtml = sortedValues.map(([value, count]) => {
-        // Check if this specific facet value is active for its field
         const isActive = currentActiveFacets[fieldName] && currentActiveFacets[fieldName].includes(value);
         return `
             <p>
@@ -426,7 +415,6 @@ function createFacets(data, fieldName, targetElement, noDataMessage, sortType = 
     }).join('');
 
     const scrollableContentHtml = `<div class="facet-list-scroll-container">${facetsHtml}</div>`;
-    // Prepend the sort buttons HTML to the facet list
     targetElement.innerHTML = sortButtonsHtml + scrollableContentHtml;
 
     // Add event listeners to newly created facet buttons (excluding sort buttons)
@@ -435,8 +423,7 @@ function createFacets(data, fieldName, targetElement, noDataMessage, sortType = 
         facetButton.addEventListener('click', runFacetFiltering);
     });
 
-    // It's also good practice to re-attach listeners to the sort buttons
-    // after re-rendering the facet content, just in case.
+    // Re-attach listeners to the sort button after re-rendering the facet content
     targetElement.querySelectorAll('.sort-btn').forEach(button => {
         button.removeEventListener('click', handleFacetSortClick);
         button.addEventListener('click', handleFacetSortClick);
@@ -490,7 +477,7 @@ function updateActiveFacetsSummary() {
     });
 }
 
-// Handles facet filtering logic
+// Facet filtering logic
 function runFacetFiltering(event) {
     const facetButton = event.currentTarget; // Get the button that was clicked
     const fieldName = facetButton.dataset.fieldName;
@@ -504,42 +491,33 @@ function runFacetFiltering(event) {
     const index = currentActiveFacets[fieldName].indexOf(facetValue);
 
     if (index > -1) {
-        // Facet is currently active, so remove it (deselect)
+        // Facet is currently active: remove it
         currentActiveFacets[fieldName].splice(index, 1);
     } else {
-        // Facet is not active, so add it (select)
+        // Facet is not active: add it
         currentActiveFacets[fieldName].push(facetValue);
     }
-
-    // If no facets are selected for a field, remove the field from currentActiveFacets
     if (currentActiveFacets[fieldName].length === 0) {
         delete currentActiveFacets[fieldName];
     }
-
-    // Re-filter data based on the current search query and updated active facets
     const searchQuery = search.value.trim();
     filterData(searchQuery); // filterData will reset displayedCount and refresh
-
-    // No URL update for facets in this version, only for main search
 }
 
 function handleFacetSortClick(event) {
     const sortButton = event.currentTarget;
-    const sortType = sortButton.dataset.sortType; // 'alphabetical' or 'count'
-    // Get the parent .sort-buttons div, then get its data-facet-field
+    const sortType = sortButton.dataset.sortType; 
     const fieldName = sortButton.closest('.sort-buttons').dataset.facetField;
 
     if (fieldName) {
         currentFacetSortOrder[fieldName] = sortType; // Update the sort order for this facet
-        // Re-render only the specific facet with the new sort order
-        const targetElement = document.getElementById(fieldName.toLowerCase().replace(/_/g, '-') + '-facet'); // Reconstruct the ID
-        // Pass the currently activeDataToDisplay, as facet counts depend on it.
+        const targetElement = document.getElementById(fieldName.toLowerCase().replace(/_/g, '-') + '-facet'); 
         createFacets(activeDataToDisplay, fieldName, targetElement, 'No data found.', sortType);
     }
     updateSortButtonStyles(); // Update button styles after a sort
 }
 
-// New function to update the active sort button styles
+// Update the active sort button styles
 function updateSortButtonStyles() {
     document.querySelectorAll('.sort-btn').forEach(button => {
         button.classList.remove('active-sort');
@@ -553,20 +531,19 @@ function updateSortButtonStyles() {
 
 // --- Other Utility Functions ---
 
-// Manages subject links within resource descriptions
+// Subject links within resource descriptions
 function handleSubjectTagClick(event) {
     const clickedTag = event.currentTarget;
     const tagValue = clickedTag.textContent.trim();
     const fieldName = clickedTag.dataset.fieldName; // Get field name from the data attribute of the subject tag
 
-    // Treat clicking a subject tag as if selecting a single facet for that field
+    // Subject tag as if selecting a single facet for that field
     currentActiveFacets = {}; // Clear all facets first
-    if (fieldName) { // Ensure fieldName is valid
-        currentActiveFacets[fieldName] = [tagValue]; // Set this specific tag as the only active facet for its field
+    if (fieldName) { 
+        currentActiveFacets[fieldName] = [tagValue]; 
     }
-
-    search.value = tagValue; // Put the tag value in the search bar
-    runSearch(); // Perform a new search with the tag value, which also updates the URL
+    search.value = tagValue; 
+    runSearch(); 
 
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
@@ -581,11 +558,11 @@ function getRandomResource() {
     const randomIndex = Math.floor(Math.random() * initialData.length);
     const randomResource = initialData[randomIndex];
 
-    search.value = ''; // Clear search bar for random display
-    currentActiveFacets = {}; // Clear any active facets for random display
-    activeDataToDisplay = [randomResource]; // Set active data to only the random resource
-    displayedCount = 0; // Reset pagination for the single random item
-    displayData(activeDataToDisplay, '', displayedCount, true); // Display the random resource
+    search.value = ''; 
+    currentActiveFacets = {}; 
+    activeDataToDisplay = [randomResource]; 
+    displayedCount = 0; 
+    displayData(activeDataToDisplay, '', displayedCount, true); 
     // Do not update URL for random resource
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
@@ -613,13 +590,13 @@ function exportJSON() {
 // Accordion function for Resource details
 function handleAccordionClick() {
     this.classList.toggle("resource-accordion-active");
-    const panel = this.nextElementSibling; // This will now correctly target .resource-panel
+    const panel = this.nextElementSibling; 
     if (panel.style.maxHeight && panel.style.maxHeight !== '0px') {
-        panel.style.maxHeight = '0px'; // Collapse
-        panel.classList.remove('active'); // Remove for padding transition
+        panel.style.maxHeight = '0px'; 
+        panel.classList.remove('active');
     } else {
-        panel.style.maxHeight = panel.scrollHeight + "px"; // Expand
-        panel.classList.add('active'); // Add for padding transition
+        panel.style.maxHeight = panel.scrollHeight + "px"; 
+        panel.classList.add('active'); 
     }
 }
 
