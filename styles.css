@@ -345,7 +345,7 @@ textarea:focus, input:focus{
 
 .main-contributor {
     text-align: center;
-    max-width: 150px;
+    max-width: 120px;
 }
 
 .collaborating-contributors {
@@ -362,7 +362,7 @@ textarea:focus, input:focus{
 
 .collaborating-contributors img {
     width: 250px;
-    object-fit: cover;
+    object-fit: contain;
 } 
 
 @media(max-width: 690px){

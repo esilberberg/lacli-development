@@ -71,6 +71,7 @@ const awards = [
 ];
 
 const features = [
+    {"alt": "The Conference on Latin American History", "img": "media/clah_logo.png", "url": "https://clah.h-net.org/?page_id=299"},
     {"alt": "Librarians with Lattes Podcast", "img": "media/librarianswithlattes.jpg", "url": "https://open.spotify.com/episode/5NnfCVb4FN4UFDoIONLsrj?si=bchyfRqpQw68gHFOSglc3w"},
     {"alt": "Handbook of European Studies. Chapter 5: Iberian Studies", "img": "media/handbook-euro-studies.png", "url": "https://open.lib.umn.edu/europeanstudieslibrarians/chapter/5-iberian-studies/"},
     {"alt": "Handbook of Latin American Studies", "img": "media/hlas-logo.svg", "url": "https://hlasopac.loc.gov/vwebv/search?searchCode=LCCN&searchArg=bi2024001009&searchType=1&permalink=y"},
@@ -99,7 +100,7 @@ let featuresHTML = '';
 features.forEach(feature => {
   featuresHTML += `
     <div class="feature-item">
-      <a href="${feature.url}" target="_blank" rel="noopener noreferrer">
+      <a href="${feature.url}" target="_blank" rel="noopener noreferrer" title="${feature.alt}">
         <img class="feature-item-img" src="${feature.img}" alt="${feature.alt || ''}" srcset=""> 
       </a>
     </div>

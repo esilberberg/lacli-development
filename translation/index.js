@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
           digitalScholars: 'Digital Scholars',
           digitalScholarsDescription: 'Fuel your digital scholarship projects with open data and primary source collections.',
           developedBy: 'Developed by',
-          collaboratingInstitutions: 'Collaborating Institutions',
+          collaboratingInstitutions: 'Collaborating Institution',
         },
         es: {
           hero: 'Explore un directorio de recursos gratuitos en línea para estudios sobre América Latina, el Caribe, los Latinos de los Estados Unidos, y la Península Ibérica.',
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
           digitalScholars: 'Académicos digitales',
           digitalScholarsDescription: 'Impulse sus proyectos académicos digitales con datos abiertos y colecciones de fuentes primarias.',
           developedBy: 'Desarrollado por',
-          collaboratingInstitutions: 'Instituciones colaboradoras',
+          collaboratingInstitutions: 'Institución colaboradora',
         },
         pt: {
           hero: 'Pesquise em um diretório com recursos online e abertos sobre América Latina, Caribe, Estudos Ibéricos e Latinos.',
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
           digitalScholars: 'Pesquisadores',
           digitalScholarsDescription: 'Incremente seus projetos de pesquisa e em humanidades digitais com dados abertos e coleções de fontes primárias',
           developedBy: 'Desenvolvido por',
-          collaboratingInstitutions: 'Instituições colaboradoras',
+          collaboratingInstitutions: 'Instituição colaboradora',
         },
       };
   
