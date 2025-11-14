@@ -908,45 +908,5 @@ pre {
 .contact-text {
     font-weight: 100;
     max-width: 400px;
-}
-
-.col {
-    margin-bottom: 1rem;
-}
-
-.contact-btn {
-    border: none;
-    background-color: var(--primary);
-    color: white;
-    padding: 1rem;
-    margin-top: 1rem;
-    width: 50%;
-    cursor: pointer;
-    border-radius: 3px;
-    font-size: 1rem;
-}
-
-.contact-btn:hover {
-    background-color: var(--tertiary);
-}
-
-.sent {
-    text-align: center;
-    padding-bottom: 500px;
-}
-
-@media(max-width: 750px){
-    #contact {
-        display: block;
-        gap: 0;
-    }
-    .contact-form {
-        margin-top: 4rem;
-    }
-    #contact form {
-        width: 95%;
-    }
-    .form-control {
-        width: 100%;
-    }
+    margin-bottom: 5rem;
 }
