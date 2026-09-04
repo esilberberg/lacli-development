@@ -1,3 +1,91 @@
+// ==========================================
+// 1. DOM Selectors
+// ==========================================
+const display = document.getElementById('display');
+const search = document.getElementById('library-search');
+
+const resourceTypesFacet = document.getElementById('resource-types-facet');
+const specificFormatsFacet = document.getElementById('specific-formats-facet');
+const countriesFacet = document.getElementById('countries-facet');
+const broadSubjectAreasFacet = document.getElementById('broad-subject-areas-facet');
+const subjectsEngFacet = document.getElementById('subjects-in-english-facet');
+const materiasEnEspanolFacet = document.getElementById('materias-en-espanol-facet');
+const assuntosEmPortuguesFacet = document.getElementById('assuntos-em-portugues-facet');
+const languagesFacet = document.getElementById('languages-facet');
+const geographicalAreasFacet = document.getElementById('geographical-area-facet');
+const timeCoverageFacet = document.getElementById('time-coverage-facet');
+const institutionalHostsFacet = document.getElementById('institutional-hosts-facet');
+
+const activeFacetsSummary = document.getElementById('activeFacetsSummary');
+
+const librarySearchBtn = document.getElementById('library-search-btn');
+const fieldsSelector = document.getElementById('fields-selector');
+
+const loader = document.getElementById('loader');
+const displaySearchSummary = document.getElementById('displaySearchSummary');
+const randomBtn = document.getElementById('random-btn');
+const exportBtn = document.getElementById('export-btn');
+const refreshBtns = document.getElementsByClassName('refresh-btn');
+const loadMoreBtn = document.getElementById('loadMore');
+
+// ==========================================
+// 2. CONFIGURATION & STATE
+// ==========================================
+
+// --- API & Constants ---
+const apiEndpoint = 'https://lacli-demo.lacli-demo-api.workers.dev';
+let displayedCount = 0; // Track how many data objects are currently displayed for pagination
+const itemsPerPage = 15; // Number of items to display per page
+
+// Search Selector Dropdown menu
+const searchFieldMapping = {
+    title: ['resource_title'],
+    subjects: ['broad_subjects', 'subjects_in_english', 'materias_en_espanol', 'assuntos_em_portugues'],
+    resource_type: ['resource_types'],
+    country: ['countries'],
+    format: ['formats']
+};
+
+// --- App State ---
+// Full data from Google Sheets API
+let initialData = [];
+// Stores the currently filtered/displayed dataset (for pagination and export)
+let activeDataToDisplay = [];
+// Stores arrays of values for each facet fieldName: { 'fieldName': ['value1', 'value2'] }
+let currentActiveFacets = {};
+
+// Store facet data for sorting (value and count) for each facet field
+let facetDataCache = {}; // e.g., { 'Resource_Types': [['Journal', 10], ['Book', 5]], 'Countries': [...] }
+let currentFacetSortOrder = {
+    'resource_types': 'count',
+    'formats': 'count',
+    'countries': 'count',
+    'broad_subjects': 'count',
+    'subjects_in_english': 'count',
+    'materias_en_espanol': 'count',
+    'assuntos_em_portugues': 'count',
+    'languages': 'count',
+    'geographical_areas': 'count',
+    'time_coverage': 'count',
+    'institutional_hosts': 'count'
+};
+
+// --- URL Search Parameter on Page Load ---
+// Get search terms from URL and display in search bar on page load
+const searchURL = window.location.href;
+const urlParams = new URL(searchURL).searchParams;
+const initialSearchQuery = urlParams.get('q') || ''; // Get 'q' parameter, default to empty string
+search.value = initialSearchQuery; // Populate search bar with URL query
+
+// Parse initial scope on page load
+const initialScope = urlParams.get('scope') || 'all';
+fieldsSelector.value = initialScope; // Set dropdown state
+
+
+// ==========================================
+// 3. HELPER UTILITIES
+// ==========================================
+
 // Custom message box function (replaces alert())
 function showMessageBox(message) {
     const msgBox = document.getElementById('message-box');
@@ -12,75 +100,72 @@ function showMessageBox(message) {
     };
 }
 
-// DOM elements
-const apiEndpoint = 'https://script.google.com/macros/s/AKfycbwA7DLdT6UmiOU7B89gdMglsDdXedG3fyh5nmCr0EeIx1iSkXVTr0-mYn615Q7WCPpB/exec';
-
-const display = document.getElementById('display');
-const search = document.getElementById('library-search');
-
-const resourceTypesFacet = document.getElementById('resource-types-facet');
-const specificFormatsFacet = document.getElementById('specific-formats-facet');
-const countriesFacet = document.getElementById('countries-facet');
-const broadSubjectAreasFacet = document.getElementById('broad-subject-areas-facet');
-const subjectsEngFacet = document.getElementById('subjects-in-english-facet');
-const materiasEnEspanolFacet = document.getElementById('materias-en-espanol-facet');
-const assuntosEmPortuguesFacet = document.getElementById('assuntos-em-portugues-facet');
-const languagesFacet = document.getElementById('languages-facet');
-const geographicalAreaFacet = document.getElementById('geographical-area-facet');
-const timeCoverageFacet = document.getElementById('time-coverage-facet');
-const institutionalHostsFacet = document.getElementById('institutional-hosts-facet');
-
-const activeFacetsSummary = document.getElementById('activeFacetsSummary');
-
-const librarySearchBtn = document.getElementById('library-search-btn');
-const loader = document.getElementById('loader');
-const displaySearchSummary = document.getElementById('displaySearchSummary');
-const randomBtn = document.getElementById('random-btn');
-const exportBtn = document.getElementById('export-btn');
-// const refreshBtn = document.getElementById('refresh-btn');
-const refreshBtns = document.getElementsByClassName('refresh-btn');
-const loadMoreBtn = document.getElementById('loadMore');
-
-
-
-let displayedCount = 0; // Track how many data objects are currently displayed for pagination
-const itemsPerPage = 15; // Number of items to display per page
-
-// Full data from Google Sheets API
-let initialData = [];
-// Stores the currently filtered/displayed dataset (for pagination and export)
-let activeDataToDisplay = [];
-// Stores arrays of values for each facet fieldName: { 'fieldName': ['value1', 'value2'] }
-let currentActiveFacets = {};
-
-// Store facet data for sorting (value and count) for each facet field
-let facetDataCache = {}; // e.g., { 'Resource_Types': [['Journal', 10], ['Book', 5]], 'Countries': [...] }
-let currentFacetSortOrder = {
-    'Resource_Types': 'count',
-    'Specific_Formats': 'count',
-    'Countries': 'count',
-    'Broad_Subject_Areas': 'count',
-    'Subjects_in_English': 'count',
-    'Materias_en_Espanol': 'count',
-    'Assuntos_em_Portugues': 'count',
-    'Languages': 'count',
-    'Geographical_Area': 'count',
-    'Time_Coverage': 'count',
-    'Institutional_Hosts': 'count'
-};
-
-
-// Function to remove diacritics from a string
+// Strip diacritics
 function removeDiacritics(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-// --- URL Search Parameter on Page Load ---
-// Get search terms from URL and display in search bar on page load
-const searchURL = window.location.href;
-const urlParams = new URL(searchURL).searchParams;
-const initialSearchQuery = urlParams.get('q') || ''; // Get 'q' parameter, default to empty string
-search.value = initialSearchQuery; // Populate search bar with URL query
+// Gets a random resource from the initial full dataset
+function getRandomResource() {
+    if (initialData.length === 0) {
+        showMessageBox('No data available to select a random resource.');
+        return;
+    }
+    const randomIndex = Math.floor(Math.random() * initialData.length);
+    const randomResource = initialData[randomIndex];
+
+    search.value = ''; 
+    currentActiveFacets = {}; 
+    activeDataToDisplay = [randomResource]; 
+    displayedCount = 0; 
+    displayData(activeDataToDisplay, '', displayedCount, true); 
+    // Do not update URL for random resource
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+
+// Exports data as CSV
+function exportCSV() {
+    if (activeDataToDisplay.length === 0) {
+        showMessageBox('No results to export. Please perform a search or refresh to get data.');
+        return;
+    }
+
+    const headers = Object.keys(activeDataToDisplay[0]);
+    
+    const csvRows = activeDataToDisplay.map(row => {
+        return headers.map(fieldName => {
+            let value = row[fieldName] === null || row[fieldName] === undefined ? '' : row[fieldName];
+            
+            // Standard CSV formatting: escape double quotes
+            let stringValue = String(value).replace(/"/g, '""');
+            
+            // Wrap in quotes to protect commas
+            return `"${stringValue}"`;
+        }).join(',');
+    });
+
+    // 1. Combine headers and rows
+    const csvContent = [headers.join(','), ...csvRows].join('\n');
+
+    // 2. Create the BOM (Byte Order Mark) for UTF-8
+    const BOM = '\uFEFF';
+
+    // 3. Combine BOM with content and trigger download
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lacli-results.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// ==========================================
+// 4. CORE FILTER & DISPLAY LOGIC
+// ==========================================
 
 // Fetches data from the API endpoint
 async function fetchData(url) {
@@ -103,7 +188,6 @@ async function fetchData(url) {
 
 // Fetch data on load
 fetchData(apiEndpoint);
-
 // Filters data based on search query and active facets
 function filterData(searchQuery) {
     loader.style.display = 'block'; // Show loader during filtering
@@ -114,9 +198,23 @@ function filterData(searchQuery) {
         const searchTerms = searchQuery.toLowerCase().split(/\s+/).map(term => removeDiacritics(term));
         filtered = filtered.filter(item => {
             return searchTerms.every(term => {
-                return Object.values(item).some(value => {
+                const selectedScope = fieldsSelector.value;
+                return Object.keys(item).some(key => {
+                    // Determine which fields we are allowed to search in
+                    let isAllowedField = false;
+
+                    if (selectedScope === 'all') {
+                        isAllowedField = true; // Search everything
+                    } else {
+                        const targetFields = searchFieldMapping[selectedScope] || [];
+                        isAllowedField = targetFields.includes(key);
+                    }
+
+                    if (!isAllowedField) return false;
+
+                    const value = item[key];
                     return value && removeDiacritics(String(value).toLowerCase()).includes(term);
-                });
+                });    
             });
         });
     }
@@ -149,17 +247,27 @@ function filterData(searchQuery) {
 // Runs the search based on the input field value and updates URL
 function runSearch() {
     const searchQuery = search.value.trim();
+    const selectedScope = fieldsSelector.value;
     // Reset active facets when a new search is performed (clear all filters)
     currentActiveFacets = {}; // Clears all facet selections
     filterData(searchQuery);
 
-    // Update URL with search query
     const newURL = new URL(window.location.href);
+    
+    // Update search query param
     if (searchQuery) {
         newURL.searchParams.set('q', searchQuery);
     } else {
-        newURL.searchParams.delete('q'); // Remove 'q' parameter if search query is empty
+        newURL.searchParams.delete('q');
     }
+    
+    // Update scope param
+    if (selectedScope && selectedScope !== 'all') {
+        newURL.searchParams.set('scope', selectedScope);
+    } else {
+        newURL.searchParams.delete('scope');
+    }
+    
     window.history.pushState(null, '', newURL);
 }
 
@@ -174,10 +282,10 @@ function displayData(data, searchQuery, count, refresh) {
         loadMoreBtn.style.display = 'none'; // Hide load more if no results
     } else {
         let dataDisplayHtml = paginatedData.map((object) => {
-            const creatorsField = object.Creators ? `
+            const creatorsField = object.creators ? `
                 <div>
                     <p class="heading-label">Creators:</p>
-                    <p>${object.Creators}</p>
+                    <p>${object.creators}</p>
                 </div>
             ` : '';
 
@@ -192,12 +300,12 @@ function displayData(data, searchQuery, count, refresh) {
             return `
             <div>
                 <div>
-                    <h2><a target="_blank" href="${object.URL || '#'}"><span>${currentItemIndex++}. </span>${object.Resource_Title || 'No Title'}</a></h2>
+                    <h2><a target="_blank" href="${object.url || '#'}"><span>${currentItemIndex++}. </span>${object.resource_title || 'No Title'}</a></h2>
                     <div class="resource-top-line-info">
-                        <p><span class="heading-label">Institutional Hosts: </span>${getTagsHtml(object.Institutional_Hosts, 'Institutional_Hosts')}</p>
-                        <p><span class="heading-label">Broad Subjects: </span> ${getTagsHtml(object.Broad_Subject_Areas, 'Broad_Subject_Areas')}</p>
-                        <p><span class="heading-label">Countries: </span> ${getTagsHtml(object.Countries, 'Countries')}</p>
-                        <p><span class="heading-label">Resource Types: </span> ${getTagsHtml(object.Resource_Types, 'Resource_Types')}</p>
+                        <p><span class="heading-label">Institutional Hosts: </span>${getTagsHtml(object.institutional_hosts, 'institutional_hosts')}</p>
+                        <p><span class="heading-label">Broad Subjects: </span> ${getTagsHtml(object.broad_subjects, 'broad_subjects')}</p>
+                        <p><span class="heading-label">Countries: </span> ${getTagsHtml(object.countries, 'countries')}</p>
+                        <p><span class="heading-label">Resource Types: </span> ${getTagsHtml(object.resource_types, 'resource_types')}</p>
                     </div>
                 </div>
 
@@ -205,35 +313,35 @@ function displayData(data, searchQuery, count, refresh) {
                     <button aria-label="Expand Details" class="resource-accordion">Details +</button>
                     <div class="resource-panel"> <div>
                             <p class="heading-label">Summary:</p>
-                            <p>${object.Summary || 'N/A'}</p>
+                            <p>${object.summary || 'N/A'}</p>
                         </div>
                         <div>
                             <p class="heading-label">Languages:</p>
-                            <p>${getTagsHtml(object.Languages, 'Languages')}</p>
+                            <p>${getTagsHtml(object.languages, 'languages')}</p>
                         </div>
                         <div>
                             <p class="heading-label">Subjects in English:</p>
-                            <p>${getTagsHtml(object.Subjects_in_English, 'Subjects_in_English')}</p>
+                            <p>${getTagsHtml(object.subjects_in_english, 'subjects_in_english')}</p>
                         </div>
                         <div>
                             <p class="heading-label">Materias en Español:</p>
-                            <p>${getTagsHtml(object.Materias_en_Espanol, 'Materias_en_Espanol')}</p>
+                            <p>${getTagsHtml(object.materias_en_espanol, 'materias_en_espanol')}</p>
                         </div>
                         <div>
                             <p class="heading-label">Assuntos em Português:</p>
-                            <p>${getTagsHtml(object.Assuntos_em_Portugues, 'Assuntos_em_Portugues')}</p>
+                            <p>${getTagsHtml(object.assuntos_em_portugues, 'assuntos_em_portugues')}</p>
                         </div>
                         <div>
                             <p class="heading-label">Formats:</p>
-                            <p>${getTagsHtml(object.Specific_Formats, 'Specific_Formats')}</p>
+                            <p>${getTagsHtml(object.formats, 'formats')}</p>
                         </div>
                         <div>
                             <p class="heading-label">Geographical Areas:</p>
-                            <p>${getTagsHtml(object.Geographical_Area, 'Geographical_Area')}</p>
+                            <p>${getTagsHtml(object.geographical_areas, 'geographical_areas')}</p>
                         </div>
                         <div>
                             <p class="heading-label">Time Coverage:</p>
-                            <p>${getTagsHtml(object.Time_Coverage, 'Time_Coverage')}</p>
+                            <p>${getTagsHtml(object.time_coverage, 'time_coverage')}</p>
                         </div>
                         ${creatorsField}
                     </div>
@@ -280,17 +388,17 @@ function displayData(data, searchQuery, count, refresh) {
     }
 
     // Recreate facets based on the currentData
-    createFacets(activeDataToDisplay, 'Resource_Types', resourceTypesFacet, 'No resource types found.');
-    createFacets(activeDataToDisplay, 'Specific_Formats', specificFormatsFacet, 'No specific formats found.');
-    createFacets(activeDataToDisplay, 'Countries', countriesFacet, 'No countries found.');
-    createFacets(activeDataToDisplay, 'Broad_Subject_Areas', broadSubjectAreasFacet, 'No subjects found.');
-    createFacets(activeDataToDisplay, 'Subjects_in_English', subjectsEngFacet, 'No subjects found.');
-    createFacets(activeDataToDisplay, 'Materias_en_Espanol', materiasEnEspanolFacet, 'No se encontraron.');
-    createFacets(activeDataToDisplay, 'Assuntos_em_Portugues', assuntosEmPortuguesFacet, 'Nenhum assunto encontrado.');
-    createFacets(activeDataToDisplay, 'Languages', languagesFacet, 'No languages found.');
-    createFacets(activeDataToDisplay, 'Geographical_Area', geographicalAreaFacet, 'No geographic areas found.');
-    createFacets(activeDataToDisplay, 'Time_Coverage', timeCoverageFacet, 'No times found.');
-    createFacets(activeDataToDisplay, 'Institutional_Hosts', institutionalHostsFacet, 'No institutions found.');
+    createFacets(activeDataToDisplay, 'resource_types', resourceTypesFacet, 'No resource types found.');
+    createFacets(activeDataToDisplay, 'formats', specificFormatsFacet, 'No specific formats found.');
+    createFacets(activeDataToDisplay, 'countries', countriesFacet, 'No countries found.');
+    createFacets(activeDataToDisplay, 'broad_subjects', broadSubjectAreasFacet, 'No subjects found.');
+    createFacets(activeDataToDisplay, 'subjects_in_english', subjectsEngFacet, 'No subjects found.');
+    createFacets(activeDataToDisplay, 'materias_en_espanol', materiasEnEspanolFacet, 'No se encontraron.');
+    createFacets(activeDataToDisplay, 'assuntos_em_portugues', assuntosEmPortuguesFacet, 'Nenhum assunto encontrado.');
+    createFacets(activeDataToDisplay, 'languages', languagesFacet, 'No languages found.');
+    createFacets(activeDataToDisplay, 'geographical_areas', geographicalAreasFacet, 'No geographic areas found.');
+    createFacets(activeDataToDisplay, 'time_coverage', timeCoverageFacet, 'No times found.');
+    createFacets(activeDataToDisplay, 'institutional_hosts', institutionalHostsFacet, 'No institutions found.');
    
     document.querySelectorAll('.sort-btn').forEach(button => {
         button.removeEventListener('click', handleFacetSortClick); // Prevent duplicate
@@ -299,48 +407,24 @@ function displayData(data, searchQuery, count, refresh) {
     updateSortButtonStyles();
 }
 
-// --- Event Handlers ---
-
-// Main search button and Enter key listener
-librarySearchBtn.addEventListener('click', runSearch);
-search.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        runSearch();
+// Accordion function for Resource details
+function handleAccordionClick() {
+    this.classList.toggle("resource-accordion-active");
+    const panel = this.nextElementSibling; 
+    if (panel.style.maxHeight && panel.style.maxHeight !== '0px') {
+        panel.style.maxHeight = '0px'; 
+        panel.classList.remove('active');
+    } else {
+        panel.style.maxHeight = panel.scrollHeight + "px"; 
+        panel.classList.add('active'); 
     }
-});
+}
 
-// Refresh buttons
-Array.from(refreshBtns).forEach(button => {
-    button.addEventListener('click', () => {
-        search.value = ''; // Clear search input
-        currentActiveFacets = {}; // Clear active facets
-        displayedCount = 0; // Reset pagination
-        filterData(''); // Show all data
-        // Clear URL search parameter
-        const newURL = new URL(window.location.href);
-        newURL.searchParams.delete('q');
-        window.history.pushState(null, '', newURL);
-        document.body.scrollTop = 0; // For Safari
-        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    });
-});
 
-// Load More button
-loadMoreBtn.addEventListener('click', () => {
-    // Check if there is more data to display
-    if (displayedCount < activeDataToDisplay.length) {
-        // `displayData` increments `displayedCount`
-        displayData(activeDataToDisplay, search.value, displayedCount, false); // `false` to append data
-    }
-});
+// =========================================================================
+// 5. FACET FILTERING
+// =========================================================================
 
-// Get random resource
-randomBtn.addEventListener('click', getRandomResource);
-
-// JSON export
-exportBtn.addEventListener('click', exportJSON);
-
-// --- Facet Functions ---
 function createFacets(data, fieldName, targetElement, noDataMessage, sortType = 'count') {
     const counts = new Map();
 
@@ -502,6 +586,20 @@ function runFacetFiltering(event) {
     filterData(searchQuery); // filterData will reset displayedCount and refresh
 }
 
+const facetFieldToIdMap = {
+  'resource_types': 'resource-types-facet',
+  'formats': 'specific-formats-facet',
+  'countries': 'countries-facet',
+  'broad_subjects': 'broad-subject-areas-facet',
+  'subjects_in_english': 'subjects-in-english-facet',
+  'materias_en_espanol': 'materias-en-espanol-facet',
+  'assuntos_em_portugues': 'assuntos-em-portugues-facet',
+  'languages': 'languages-facet',
+  'geographical_areas': 'geographical-area-facet',
+  'time_coverage': 'time-coverage-facet',
+  'institutional_hosts': 'institutional-hosts-facet'
+};
+
 function handleFacetSortClick(event) {
     const sortButton = event.currentTarget;
     const sortType = sortButton.dataset.sortType; 
@@ -509,7 +607,7 @@ function handleFacetSortClick(event) {
 
     if (fieldName) {
         currentFacetSortOrder[fieldName] = sortType; // Update the sort order for this facet
-        const targetElement = document.getElementById(fieldName.toLowerCase().replace(/_/g, '-') + '-facet'); 
+        const targetElement = document.getElementById(facetFieldToIdMap[fieldName]);
         createFacets(activeDataToDisplay, fieldName, targetElement, 'No data found.', sortType);
     }
     updateSortButtonStyles(); // Update button styles after a sort
@@ -527,74 +625,74 @@ function updateSortButtonStyles() {
     });
 }
 
-// --- Other Utility Functions ---
-
 // Subject links within resource descriptions
 function handleSubjectTagClick(event) {
     const clickedTag = event.currentTarget;
     const tagValue = clickedTag.textContent.trim();
-    const fieldName = clickedTag.dataset.fieldName; // Get field name from the data attribute of the subject tag
+    const fieldName = clickedTag.dataset.fieldName; 
 
-    // Subject tag as if selecting a single facet for that field
-    currentActiveFacets = {}; // Clear all facets first
+    // 1. Clear text search so we don't do a global keyword match
+    search.value = ''; 
+    
+    // 2. Clear other facets and target ONLY this field
+    currentActiveFacets = {}; 
     if (fieldName) { 
         currentActiveFacets[fieldName] = [tagValue]; 
     }
-    search.value = tagValue; 
-    runSearch(); 
+    
+    // 3. Directly filter the data using the facet (bypassing runSearch)
+    filterData(''); 
 
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    // 4. Update the URL without the general 'q' parameter
+    const newURL = new URL(window.location.href);
+    newURL.searchParams.delete('q');
+    window.history.pushState(null, '', newURL);
+
+    // 5. Scroll to top
+    document.body.scrollTop = 0; 
+    document.documentElement.scrollTop = 0; 
 }
 
-// Gets a random resource from the initial full dataset
-function getRandomResource() {
-    if (initialData.length === 0) {
-        showMessageBox('No data available to select a random resource.');
-        return;
+
+// ==========================================
+// 6. EVENT LISTENERS 
+// ==========================================
+
+// Main search button and Enter key listener
+librarySearchBtn.addEventListener('click', runSearch);
+search.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        runSearch();
     }
-    const randomIndex = Math.floor(Math.random() * initialData.length);
-    const randomResource = initialData[randomIndex];
+});
 
-    search.value = ''; 
-    currentActiveFacets = {}; 
-    activeDataToDisplay = [randomResource]; 
-    displayedCount = 0; 
-    displayData(activeDataToDisplay, '', displayedCount, true); 
-    // Do not update URL for random resource
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-}
+// Refresh button and refresh 'x' in search bar
+Array.from(refreshBtns).forEach(button => {
+    button.addEventListener('click', () => {
+        search.value = ''; // Clear search input
+        currentActiveFacets = {}; // Clear active facets
+        displayedCount = 0; // Reset pagination
+        filterData(''); // Show all data
+        // Clear URL search parameter
+        const newURL = new URL(window.location.href);
+        newURL.searchParams.delete('q');
+        window.history.pushState(null, '', newURL);
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    });
+});
 
-// Exports data as JSON
-function exportJSON() {
-    if (activeDataToDisplay.length === 0) {
-        showMessageBox('No results to export. Please perform a search or refresh to get data.');
-        return;
+// Load More button
+loadMoreBtn.addEventListener('click', () => {
+    // Check if there is more data to display
+    if (displayedCount < activeDataToDisplay.length) {
+        // `displayData` increments `displayedCount`
+        displayData(activeDataToDisplay, search.value, displayedCount, false); // `false` to append data
     }
+});
 
-    const jsonString = JSON.stringify(activeDataToDisplay, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'lacli_library_results.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
+// Get random resource
+randomBtn.addEventListener('click', getRandomResource);
 
-// Accordion function for Resource details
-function handleAccordionClick() {
-    this.classList.toggle("resource-accordion-active");
-    const panel = this.nextElementSibling; 
-    if (panel.style.maxHeight && panel.style.maxHeight !== '0px') {
-        panel.style.maxHeight = '0px'; 
-        panel.classList.remove('active');
-    } else {
-        panel.style.maxHeight = panel.scrollHeight + "px"; 
-        panel.classList.add('active'); 
-    }
-}
-
+// CSV export
+exportBtn.addEventListener('click', exportCSV);
